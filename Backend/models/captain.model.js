@@ -48,6 +48,8 @@ const captainSchema = new mongoose.Schema({
         model: {
             type: String,
             required: true,
+            min: [3, 'Model must be at least 3 characters long'],
+            max: 30,
         },
         plate: {
             type: String,
@@ -58,13 +60,14 @@ const captainSchema = new mongoose.Schema({
         },
         type: {
             type: String,
-            enum: ['car', 'bike', 'auto'],
+            enum: ['Car', 'Bike', 'Auto'],
             required: true,
         },
         capacity: {
             type: Number,
             required: true,
             min: [1, 'Capacity must be at least 1'],
+            max: [30, 'Capacity must be at most 30'],
         },
     },
     location: {
