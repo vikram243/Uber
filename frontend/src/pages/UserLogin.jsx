@@ -36,7 +36,7 @@ const UserLogin = () => {
   return (
     <div className='p-5 flex flex-col justify-between h-screen'>
       <div>
-        <img className='w-17 mt-2 mb-7' src="https://1000logos.net/wp-content/uploads/2021/04/Uber-logo.png" alt="" />
+        <img className='w-17 mt-2 mb-7' src="https://1000logos.net/wp-content/uploads/2021/04/Uber-logo.png" alt="Uber" />
         <form action=""
           onSubmit={submitHandler}
         >
