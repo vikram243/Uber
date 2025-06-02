@@ -2,21 +2,19 @@ import React from 'react'
 
 const LookingForDriver = (props) => {
   return (
-    <div ref={props.VehicleFoundPanelRef} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
+    <div ref={props.WaitingForDriverPannelRef} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
       
-      
-      <h3 className='text-2xl font-semibold mb-3'>Looking for a Driver</h3>
-      <div className='flex gap-2 justify-between flex-col items-center'>
-
+      <div className='flex items-center justify-between'>
         <img className='h-20 object-cover object-center' src={props.selectedVehicleImage || "https://i.pinimg.com/originals/93/c1/05/93c105244c0a3de81267a89cb13386f7.png"} alt="Selected Vehicle" />
-
-        {/* Loading Animation */}
-        <div className="absolute top-9 right-22 flex items-center justify-center gap-2">
-          <div className="w-2 h-2 bg-black rounded-full animate-bounce [animation-delay:-0.4s]"></div>
-          <div className="w-2 h-2 bg-black rounded-full animate-bounce [animation-delay:-0.2s]"></div>
-          <div className="w-2 h-2 bg-black rounded-full animate-bounce "></div>
+        <div className='text-right'>
+          <h2 className='text-sm font-medium capitalize'>Pankaj</h2>
+          <h4 className='text-lg font-semibold -mt-1 -mb-1'>MP04 AN 2004</h4>
+          <p className='text-xs text-gray-600'>Maruti Suzuki Alto</p>
+          <h1 className='text-lg font-mono text-blue-800 mt-1.5'>247864</h1>
         </div>
+      </div>
 
+      <div className='flex gap-2 justify-between flex-col items-center'>
         <div className='w-full mt-3'>
           <div className='flex items-center gap-5 p-3 border-b-1'>
             <i className="ri-map-pin-user-fill"></i>
@@ -41,7 +39,7 @@ const LookingForDriver = (props) => {
           </div>
         </div>
         <button className='w-full bg-red-500 text-white font-medium p-2 rounded-lg'
-          onClick={() => { props.setVehicleFound(false) }}>Cancel Ride</button>
+          onClick={() => { props.setWaitingForDriverPannel(false) }}>Cancel Ride</button>
       </div>
     </div>
   )
