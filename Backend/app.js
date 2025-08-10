@@ -6,6 +6,7 @@ const cors = require('cors');
 require('./lib/db.js')();
 const userRoute = require('./routes/user.route.js');
 const captainRoute = require('./routes/captain.route.js');
+const mapsRoute = require('./routes/maps.routes.js'); 
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -17,5 +18,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use('/users', userRoute);
 app.use('/captains', captainRoute);
+app.use('/maps', mapsRoute);
 
 module.exports = app;
