@@ -8,6 +8,8 @@ import VehiclePanel from '../components/VehiclePanel'
 import LookingForDriver from '../components/LookingForDriver'
 import WaitingForDriver from '../components/WaitingForDriver'
 import api from '../lib/api'
+import { SocketContext } from '../context/SocketContext'
+import { UserDataContext } from '../context/UserDataContext'
 
 const UserHome = () => {
   const [pickupLocation, setPickupLocation] = useState('')
@@ -18,6 +20,14 @@ const UserHome = () => {
   const [selectedVehicleImage, setSelectedVehicleImage] = useState(null)
   const [ride, setRide] = useState(null)
   const [WaitingForDriverPannel, setWaitingForDriverPannel] = useState(false)
+  const { sendMessage } = React.useContext(SocketContext)
+  const { userData } = React.useContext(UserDataContext)
+
+  // only send join when we have a userId
+  useEffect(() => {
+    if (!userData?._id) return
+    sendMessage('join', { userId: userData._id, role: 'user' })
+  }, [sendMessage, userData])
 
   const panelRef = useRef(null)
   const VehiclePanelRef = useRef(null)

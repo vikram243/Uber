@@ -13,7 +13,9 @@ router.post('/create',
 )
 
 router.get('/:id', authMiddleware.authUser, rideController.getRide)
+
 router.post('/:id/cancel', authMiddleware.authUser, rideController.cancelRide)
+
 router.post('/:id/accept', authMiddleware.authCaptain, rideController.acceptRide)
 
 module.exports = router;

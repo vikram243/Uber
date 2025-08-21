@@ -9,7 +9,7 @@ const UserProtectedWrapper = ({
   const token = localStorage.getItem('token')
   const navigate = useNavigate()
   const { setUserData } = useContext(UserDataContext)
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
 
   useEffect(() => {
     if (!token || token === undefined || token === null) {
@@ -21,9 +21,11 @@ const UserProtectedWrapper = ({
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`
-          }
+          },
+          withCredentials: true
         })
         if (response.status === 200) {
+          // backend returns { message, user } — store the user object
           setUserData(response.data.user)
         } else {
           localStorage.removeItem('token')
@@ -38,7 +40,6 @@ const UserProtectedWrapper = ({
       }
     }
     fetchUserData()
-
   }, [token, navigate, setUserData])
 
   return (
