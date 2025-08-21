@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useGSAP } from '@gsap/react'
 import { gsap } from 'gsap'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import 'remixicon/fonts/remixicon.css'
 import LocationSearchPanel from '../components/LocationSearchPanel'
 import VehiclePanel from '../components/VehiclePanel'
@@ -68,6 +68,9 @@ const UserHome = () => {
       duration: 0.5,
       ease: 'power2.inOut',
     })
+    gsap.to('.nav', {
+      zIndex: panelOpen ? 2 : 3,
+    })
     gsap.to('.arrow', {
       opacity: panelOpen ? 1 : 0,
       duration: 0.5,
@@ -110,10 +113,17 @@ const UserHome = () => {
   return (
     <div className='relative h-screen w-screen overflow-hidden'>
       <img
-        className='logo w-17 mt-7 ml-5 absolute z-2'
+        className='nav logo w-17 mt-7 ml-5 absolute z-3 '
         src="https://1000logos.net/wp-content/uploads/2021/04/Uber-logo.png"
         alt="Uber"
       />
+
+      <Link
+        to='/user/logout'
+        className='nav absolute right-2 z-3 top-6 h-8 w-8 bg-white flex items-center justify-center border-1 rounded-full'
+      >
+        <i className="text-lg font-medium ri-logout-box-r-line"></i>
+      </Link>
 
       {/* Map */}
       <div className='map h-screen w-screen relative z-1' onClick={() => setVehiclePanelOpen(false)}>

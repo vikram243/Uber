@@ -91,7 +91,6 @@ const VehiclePanel = (props) => {
     } catch (err) {
       const msg = err?.response?.data?.error || err.message
       console.error('Failed to create ride', msg)
-      alert(msg)
     }
   }
 
@@ -99,10 +98,12 @@ const VehiclePanel = (props) => {
 
   return (
     <div ref={props.VehiclePanelRef} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
-      <h2 className='font-bold text-xl'>Choose a vehicle</h2>
+      <i className="ri-arrow-down-s-line absolute right-4"
+        onClick={() => props.setVehiclePanelOpen(false)}
+      ></i>
       {noRidesAvailable && (
-        <div className='flex justify-between bg-gray-200 rounded-lg items-center p-4'>
-          <i className="ri-error-warning-line text-xl mr-3"></i>
+        <div className='flex justify-between h-38 bg-gray-200 rounded-lg items-center mt-8 p-4'>
+          <i className="ri-error-warning-line text-xl mr-3 text-red-500"></i>
           <div className='w-full text-center'>
             <h5 className='font-semibold'>No rides available</h5>
             <p className='text-sm text-gray-600'>Try more specific, nearby addresses</p>
@@ -110,13 +111,14 @@ const VehiclePanel = (props) => {
         </div>
       )}
       {isQuoting && (
-        <div className='text-xs text-gray-500'>Fetching fares…</div>
+        <div className='text-xl h-56 text-gray-500'>Fetching fares…</div>
       )}
       {!noRidesAvailable && !isQuoting && fareError && (
         <div className='text-xs text-red-600'>{fareError}</div>
       )}
       {(canQuote && !noRidesAvailable && !isQuoting) && (
         <>
+          <h2 className='font-bold text-xl'>Choose a vehicle</h2>
           <div onClick={() => fares.car ? createRide('car', "https://i.pinimg.com/originals/93/c1/05/93c105244c0a3de81267a89cb13386f7.png") : null} className={`flex justify-between inset-shadow-zinc-950 ${fares.car ? 'active:bg-gray-300' : 'opacity-60 pointer-events-none'} bg-gray-200 rounded-lg items-center`}>
             <img className='h-13 w-[33%]' src="https://i.pinimg.com/originals/93/c1/05/93c105244c0a3de81267a89cb13386f7.png" alt="Car" />
             <div className='w-[62%] p-2'>

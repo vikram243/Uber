@@ -33,14 +33,14 @@ const LookingForDriver = (props) => {
           <div className="w-2 h-2 bg-black rounded-full animate-bounce"></div>
         </div>
         <div className='w-full mt-3'>
-          <div className='flex items-center gap-5 p-3 border-b-1'>
+          <div className='flex items-center gap-5 p-3 border-b-1 border-gray-300'>
             <i className="ri-map-pin-user-fill"></i>
             <div>
               <h3 className='text-lg font-medium'>Pickup</h3>
               <p className='text-sm -mt-1 text-gray-600'>{ride?.pickup || '-'}</p>
             </div>
           </div>
-          <div className='flex items-center gap-5 p-3 border-b-1'>
+          <div className='flex items-center gap-5 p-3 border-b-1 border-gray-300'>
             <i className="text-lg ri-map-pin-2-fill"></i>
             <div>
               <h3 className='text-lg font-medium'>Drop-off</h3>

@@ -166,14 +166,18 @@ const CaptainSignup = () => {
                 maxLength={13}
                 placeholder='MH 12 AB 1234'
               />
-              <input
+              <select
                 className='bg-[#eeeeee] py-2 px-4 border rounded-xl w-1/2 mb-3'
                 value={capacity}
                 onChange={(e) => setCapacity(e.target.value)}
                 required
-                type="text"
-                placeholder='Capacity'
-              />
+              >
+                <option value="" disabled>Capacity</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
             </div>
 
             <div className='flex w-1/2 pr-1 gap-2'>
