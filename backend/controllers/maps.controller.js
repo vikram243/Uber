@@ -22,8 +22,9 @@ module.exports.getCoordinates = async (req, res) => {
 
         return res.status(200).json(coordinates);
     } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching coordinates:', error);
-        return res.status(500).json({ message: 'Internal server error', error: error.message });
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
@@ -48,10 +49,11 @@ module.exports.getDistanceTime = async (req, res) => {
 
         return res.status(200).json(distanceTime);
     } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching distance and time:', error);
         const msg = error?.message === 'ZERO_RESULTS' || error?.message === 'NOT_FOUND'
             ? 'No route found for the given locations'
-            : (error?.message || 'Failed to get distance and time');
+            : 'Failed to get distance and time';
         return res.status(400).json({ message: msg });
     }
 }
@@ -77,7 +79,8 @@ module.exports.getSuggestions = async (req, res) => {
 
         return res.status(200).json(suggestions);
     } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching suggestions:', error);
-        return res.status(500).json({ message: 'Internal server error', error: error.message });
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }

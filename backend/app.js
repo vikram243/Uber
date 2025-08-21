@@ -25,4 +25,8 @@ app.use('/captains', captainRoute);
 app.use('/maps', mapsRoute);
 app.use('/rides', rideRoute);
 
+// Register centralized error handler after routes
+const errorHandler = require('./lib/errorHandler');
+app.use(errorHandler);
+
 module.exports = app;

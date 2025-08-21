@@ -42,7 +42,9 @@ const registerCaptain = async (req, res) => {
         });
         return res.status(201).json({ message: 'Captain registered successfully', captain, token });
     } catch (error) {
-        return res.status(500).json({ message: 'Error registering captain', error });
+    // eslint-disable-next-line no-console
+    console.error('registerCaptain error:', error);
+    return res.status(500).json({ message: 'Error registering captain' });
     }
 }
 
@@ -77,27 +79,30 @@ const loginCaptain = async (req, res) => {
         });
         return res.status(200).json({ message: 'Captain logged in successfully', captain, token });
     } catch (error) {
-        return res.status(500).json({ message: 'Error logging in captain', error });
+    // eslint-disable-next-line no-console
+    console.error('loginCaptain error:', error);
+    return res.status(500).json({ message: 'Error logging in captain' });
     }
 }
 
 const logoutCaptain = async (req, res) => {
     try {
-        const token = req.cookies.token || req.headers['authorization']?.split(' ')[1];
+        const token = req.cookies?.token || req.headers['authorization']?.split(' ')[1];
         if (!token) {
-            return res.status(401).json({ message: 'Unauthorized' });
+            res.clearCookie('token');
+            return res.status(200).json({ message: 'Captain logged out' });
         }
 
         const isBlackListed = await blackListTokenModel.findOne({ token });
-        if (isBlackListed) {
-            return res.status(401).json({ message: 'Unauthorized' });
+        if (!isBlackListed) {
+            await blackListTokenModel.create({ token });
         }
-
-        await blackListTokenModel.create({ token });
         res.clearCookie('token');
         return res.status(200).json({ message: 'Captain logged out successfully' });
     } catch (error) {
-        return res.status(500).json({ message: 'Error logging out captain', error });
+        // eslint-disable-next-line no-console
+        console.error('logoutCaptain error:', error);
+        return res.status(500).json({ message: 'Error logging out captain' });
     }
 }
 
@@ -110,7 +115,9 @@ const getCaptainProfile = async (req, res) => {
 
         return res.status(200).json({ message: 'Captain profile retrieved successfully', captain });
     } catch (error) {
-        return res.status(500).json({ message: 'Error retrieving captain profile', error });
+    // eslint-disable-next-line no-console
+    console.error('getCaptainProfile error:', error);
+    return res.status(500).json({ message: 'Error retrieving captain profile' });
     }
 }
 

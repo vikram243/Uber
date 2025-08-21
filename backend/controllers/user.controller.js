@@ -38,7 +38,10 @@ const registerUser = async (req, res) => {
         return res.status(201).json({ message: 'User registered successfully', user, token });
     }
     catch (error) {
-        return res.status(500).json({ message: 'Error registering user', error });
+  // avoid leaking internal error details to clients
+  // eslint-disable-next-line no-console
+  console.error('registerUser error:', error);
+  return res.status(500).json({ message: 'Error registering user' });
     }
 }
 
@@ -79,20 +82,24 @@ const loginUser = async (req, res) => {
     return res.status(200).json({ message: 'User logged in successfully', user: safeUser, token });
   }
   catch (error) {
-    return res.status(500).json({ message: 'Error logging in user', error });
+  // eslint-disable-next-line no-console
+  console.error('loginUser error:', error);
+  return res.status(500).json({ message: 'Error logging in user' });
   }
 }
 
 const logoutUser = async (req, res) => {
     try {
-        res.clearCookie('token');
-        const token = req.cookies.token || req.headers['authorization']?.split(' ')[1];
-        const blackListToken = new blackListTokenModel({ token });
-        await blackListToken.save();
-
-        return res.status(200).json({ message: 'User logged out successfully' });
+    const token = req.cookies?.token || req.headers['authorization']?.split(' ')[1];
+    if (token) {
+      await blackListTokenModel.create({ token });
+    }
+    res.clearCookie('token');
+    return res.status(200).json({ message: 'User logged out successfully' });
     } catch (error) {
-        return res.status(500).json({ message: 'Error logging out user', error });
+    // eslint-disable-next-line no-console
+    console.error('logoutUser error:', error);
+    return res.status(500).json({ message: 'Error logging out user' });
     }
 }
 
@@ -103,7 +110,9 @@ const getUserProfile = async (req, res) => {
     delete safeUser.password;
     return res.status(200).json({ message: 'User profile fetched successfully', user: safeUser });
   } catch (error) {
-    return res.status(500).json({ message: 'Error fetching user profile', error });
+  // eslint-disable-next-line no-console
+  console.error('getUserProfile error:', error);
+  return res.status(500).json({ message: 'Error fetching user profile' });
   }
 }
 

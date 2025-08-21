@@ -17,17 +17,33 @@ function initializeSocket(server) {
         console.log('Socket connected:', socket.id);
 
         socket.on('join', async (data) => {
-            const { userId, role } = data;
-            if (role === 'user') {
-                const user = await userModel.findByIdAndUpdate(userId, { socketId: socket.id }, { new: true });
-            }
-            else if (role === 'captain') {
-                const captain = await captainModel.findByIdAndUpdate(userId, { socketId: socket.id }, { new: true });
+            try {
+                const { userId, role } = data || {};
+                if (!userId || !role) return;
+                if (role === 'user') {
+                    await userModel.findByIdAndUpdate(userId, { socketId: socket.id }, { new: true });
+                } else if (role === 'captain') {
+                    await captainModel.findByIdAndUpdate(userId, { socketId: socket.id }, { new: true });
+                }
+            } catch (err) {
+                // log but don't crash socket
+                // eslint-disable-next-line no-console
+                console.error('Socket join error:', err.message || err);
             }
         });
-                
 
-        socket.on('disconnect', (reason) => {
+        socket.on('disconnect', async (reason) => {
+            // try to clear any user/captain record that references this socket id
+            try {
+                await Promise.all([
+                    userModel.updateOne({ socketId: socket.id }, { $unset: { socketId: 1 } }),
+                    captainModel.updateOne({ socketId: socket.id }, { $unset: { socketId: 1 } }),
+                ]);
+            } catch (err) {
+                // eslint-disable-next-line no-console
+                console.error('Socket disconnect cleanup error:', err.message || err);
+            }
+            // eslint-disable-next-line no-console
             console.log('Socket disconnected:', socket.id, reason);
         });
 
@@ -46,4 +62,8 @@ function sendMessageToSocketId(socketId, event, data) {
     io.to(socketId).emit(event, data);
 }
 
-module.exports = { initializeSocket, sendMessageToSocketId };
+function getIo() {
+    return io;
+}
+
+module.exports = { initializeSocket, sendMessageToSocketId, getIo };
