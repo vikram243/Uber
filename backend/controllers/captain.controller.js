@@ -3,6 +3,8 @@ const captainService = require('../services/captain.service');
 const { validationResult } = require('express-validator');
 const blackListTokenModel = require('../models/blackListToken.model');
 
+// register a new captain
+// It validates the input, checks if the captain already exists, hashes the password, and creates a new captain with the provided details
 const registerCaptain = async (req, res) => {
     try {
         const { fullname, email, password, vehicle } = req.body;
@@ -48,6 +50,8 @@ const registerCaptain = async (req, res) => {
     }
 }
 
+// login a captain
+// It validates the input, checks if the captain exists, compares the password, and generates a token
 const loginCaptain = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -85,6 +89,8 @@ const loginCaptain = async (req, res) => {
     }
 }
 
+// logout a captain
+// It checks if the token is present, blacklists it, and clears the cookie
 const logoutCaptain = async (req, res) => {
     try {
         const token = req.cookies?.token || req.headers['authorization']?.split(' ')[1];
@@ -106,6 +112,8 @@ const logoutCaptain = async (req, res) => {
     }
 }
 
+// get captain profile
+// It checks if the captain is authenticated and returns the captain's profile
 const getCaptainProfile = async (req, res) => {
     try {
         const captain = req.captain;

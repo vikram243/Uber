@@ -6,6 +6,8 @@ const CaptainLogout = () => {
   const token = localStorage.getItem('token')
   const navigate = useNavigate()
 
+  // Effect to handle logout
+  // It sends a GET request to the server to log out the captain
   useEffect(() => {
     const doLogout = async () => {
       try {
@@ -28,7 +30,7 @@ const CaptainLogout = () => {
 
   return (
     <div>
-            UserLogout
+      UserLogout
     </div>
   )
 }

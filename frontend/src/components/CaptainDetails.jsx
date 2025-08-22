@@ -9,6 +9,7 @@ const CaptainDetails = () => {
           src={"https://www.pngall.com/wp-content/uploads/12/Driver-PNG-Clipart.png"}
           alt="Captain"
         />
+
         <div className='text-right'>
           <h2 className='text-lg font-medium text-blue-500 capitalize'>{"Vivek Kusbaha"}</h2>
           <h4 className='text-xm font-mono -mt-1 -mb-1'>{"₹ 295.36"}</h4>
@@ -25,6 +26,7 @@ const CaptainDetails = () => {
               <p className='text-xs text-gray-400'>{'Hours Online'}</p>
             </div>
           </div>
+
           <div className='flex items-center gap-1 p-3 flex-col'>
             <i className="ri-road-map-line text-gray-500 text-xl"></i>
             <div className='flex items-center flex-col'>
@@ -32,6 +34,7 @@ const CaptainDetails = () => {
               <p className='text-xs text-gray-400'>{'Total Distance'}</p>
             </div>
           </div>
+          
           <div className='flex items-center gap-1 p-3 flex-col'>
             <i className="ri-booklet-line text-gray-500 text-xl"></i>
             <div className='flex items-center flex-col'>

@@ -1,8 +1,9 @@
 import React from 'react'
 
-const UpcomingRidePopup = () => {
+const UpcomingRidePopup = React.forwardRef((props, ref) => {
+
   return (
-    <div className='absolute bottom-0 bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
+    <div ref={ref} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
       <div className='flex p-2 items-center gap-8 justify-around bg-gray-200 rounded'>
         <img className='h-20 border-1 rounded-full border-gray-300 object-cover object-center' src={"https://png.pngtree.com/png-clipart/20230814/original/pngtree-cute-cartoon-girls-face-vector-png-image_10354397.png"} alt="Passanger" />
         <div className='text-right'>
@@ -22,6 +23,7 @@ const UpcomingRidePopup = () => {
               <p className='text-sm -mt-1 text-gray-600'>{'Bhopal Railway Station'}</p>
             </div>
           </div>
+
           <div className='flex items-center gap-5 border-gray-300 p-3 border-b-1'>
             <i className="text-lg ri-map-pin-2-fill"></i>
             <div>
@@ -30,13 +32,20 @@ const UpcomingRidePopup = () => {
             </div>
           </div>
         </div>
+
         <div className='mt-4 w-full flex items-center justify-between'>
-          <button className='w-full bg-gray-500 text-white font-medium p-2 rounded-lg'>Ignore</button>
-          <button className='w-full bg-green-500 text-white font-medium p-2 rounded-lg ml-2'>Accept</button>
+          <button 
+            onClick={() => props.setUpcomingRidePanel(false)}
+            className='w-full bg-gray-500 text-white font-medium p-2 rounded-lg'>Ignore
+          </button>
+          <button 
+            onClick={() => {props.setCofirmUpcomingRidePanel(true); props.setUpcomingRidePanel(false)}}
+            className='w-full bg-green-500 text-white font-medium p-2 rounded-lg ml-2'>Accept
+          </button>
         </div>
       </div>
     </div>
   )
-}
+})
 
 export default UpcomingRidePopup

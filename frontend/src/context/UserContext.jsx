@@ -2,6 +2,8 @@ import React, {useState} from 'react'
 import { UserDataContext } from './UserDataContext';
 
 const UserContext = ({children}) => {
+  
+  // State to hold user data, initialized with null values
   const [userData, setUserData] = useState({
     fullname:{
       firstname: null,

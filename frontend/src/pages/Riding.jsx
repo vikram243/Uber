@@ -3,7 +3,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import api from '../lib/api'
 
 const Riding = () => {
+  // 🔹 State to manage ride details and vehicle image
   const navigate = useNavigate()
+
+  // 🔹 Retrieve ride details from localStorage or initialize to null
   const [ride, setRide] = useState(() => {
     try { return JSON.parse(localStorage.getItem('ride')) } catch { return null }
   })

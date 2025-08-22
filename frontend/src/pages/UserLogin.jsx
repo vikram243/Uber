@@ -10,6 +10,8 @@ const UserLogin = () => {
   const { setUserData } = useContext(UserDataContext)
   const navigate = useNavigate()
 
+  // Function to handle form submission
+  // It sends a POST request to the server with the user's email and password
   const submitHandler = async (e) => {
     e.preventDefault()
     const userData = {
@@ -49,6 +51,7 @@ const UserLogin = () => {
             type="email"
             placeholder='example@gmail.com'
           />
+
           <h3 className='mb-2 ml-2 font-semibold'>Enter password</h3>
           <input className='bg-[#eeeeee] py-2 px-4 border rounded-xl w-full mb-7'
             value={password}
@@ -57,6 +60,7 @@ const UserLogin = () => {
             type="password"
             placeholder='Password'
           />
+          
           <button className='bg-black text-white font-semibold py-2 px-4 rounded-xl w-full'>Login</button>
           <p className='text-center'>New here ? <Link to='/user/signup' className='text-blue-600'>Create an account</Link></p>
         </form>

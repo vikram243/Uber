@@ -1,5 +1,7 @@
 const axios = require('axios');
 
+// Get coordinates for a given address
+// It validates the input, checks if the address is provided, and returns the coordinates
 module.exports.getCoordinates = async (address) => {
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
@@ -20,6 +22,8 @@ module.exports.getCoordinates = async (address) => {
     }   
 }
 
+// Get distance and time between two locations
+// It validates the input, checks if both origin and destination are provided, and returns the distance
 module.exports.getDistanceTime = async (origin, destination) => {
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`;
@@ -44,6 +48,9 @@ module.exports.getDistanceTime = async (origin, destination) => {
     }
 }
 
+// Get suggestions for a given input
+// It validates the input, checks if the input is provided, and returns suggestions based on the
+// Google Places API Autocomplete service
 module.exports.getSuggestions = async (input) => {
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${apiKey}`;

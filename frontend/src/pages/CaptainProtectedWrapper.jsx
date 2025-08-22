@@ -11,11 +11,15 @@ const CaptainProtectedWrapper = ({
   const { setCaptain } = useContext(CaptainDataContext)
   const [, setLoading] = useState(true)
 
+  // Effect to check if the token is valid and fetch captain data
+  // If the token is invalid or not present, it redirects to the home page
   useEffect(() => {
     if (!token || token === undefined || token === null) {
       navigate('/')
     }
 
+    // Function to fetch captain data
+    // It sends a GET request to the server with the token in the headers
     const fetchCaptainData = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/captains/profile`, {

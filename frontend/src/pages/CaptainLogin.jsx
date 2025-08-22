@@ -10,6 +10,8 @@ const CaptainLogin = () => {
   const { setCaptain } = useContext(CaptainDataContext)
   const navigate = useNavigate()
 
+  // Function to handle form submission
+  // It sends a POST request to the server with the captain's email and password
   const submitHandler = async (e) => {
     e.preventDefault()
     const captainData = {

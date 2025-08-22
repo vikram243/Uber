@@ -9,10 +9,8 @@ const captainRoute = require('./routes/captain.route.js');
 const mapsRoute = require('./routes/maps.routes.js'); 
 const rideRoute = require('./routes/ride.routes.js');
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
+// Middleware to handle CORS and allow credentials
+// The origin can be set to a specific URL or an array of URLs
 app.use(cors({
   origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : true,
   credentials: true,

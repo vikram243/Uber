@@ -17,6 +17,8 @@ const CaptainSignup = () => {
   const { setCaptain } = useContext(CaptainDataContext)
   const navigate = useNavigate()
 
+  // Function to format the plate number
+  // It formats the input to match the expected pattern (e.g., "MH 12 AB 1234")
   const formatPlateNumber = (input) => {
     let value = input.toUpperCase().replace(/[^A-Z0-9]/g, '')
 
@@ -27,11 +29,15 @@ const CaptainSignup = () => {
     return value
   }
 
+  // Function to handle plate number input change
+  // It formats the input value to match the expected plate number format
   const handlePlateChange = (e) => {
     const formattedValue = formatPlateNumber(e.target.value)
     setPlateNumber(formattedValue)
   }
 
+  // Function to handle form submission
+  // It sends a POST request to the server with the captain's details
   const submitHandler = async (e) => {
     e.preventDefault()
     const captainData = {
@@ -146,6 +152,7 @@ const CaptainSignup = () => {
                 <option value="Brown">Brown</option>
                 <option value="Gray/Silver">Gray/Silver</option>
               </select>
+
               <input
                 className='bg-[#eeeeee] py-2 px-4 border rounded-xl w-1/2 mb-3'
                 value={model}
@@ -166,6 +173,7 @@ const CaptainSignup = () => {
                 maxLength={13}
                 placeholder='MH 12 AB 1234'
               />
+              
               <select
                 className='bg-[#eeeeee] py-2 px-4 border rounded-xl w-1/2 mb-3'
                 value={capacity}

@@ -4,6 +4,7 @@ import api from '../lib/api'
 const LookingForDriver = (props) => {
   const ride = props.ride
 
+  // Poll ride status every 3 seconds to check if accepted
   useEffect(() => {
     if (!ride?._id) return
     let cancelled = false
@@ -32,6 +33,7 @@ const LookingForDriver = (props) => {
           <div className="w-2 h-2 bg-black rounded-full animate-bounce [animation-delay:-0.2s]"></div>
           <div className="w-2 h-2 bg-black rounded-full animate-bounce"></div>
         </div>
+
         <div className='w-full mt-3'>
           <div className='flex items-center gap-5 p-3 border-b-1 border-gray-300'>
             <i className="ri-map-pin-user-fill"></i>
@@ -40,6 +42,7 @@ const LookingForDriver = (props) => {
               <p className='text-sm -mt-1 text-gray-600'>{ride?.pickup || '-'}</p>
             </div>
           </div>
+
           <div className='flex items-center gap-5 p-3 border-b-1 border-gray-300'>
             <i className="text-lg ri-map-pin-2-fill"></i>
             <div>
@@ -47,6 +50,7 @@ const LookingForDriver = (props) => {
               <p className='text-sm -mt-1 text-gray-600'>{ride?.destination || '-'}</p>
             </div>
           </div>
+
           <div className='flex items-center gap-5 p-3'>
             <i className="ri-currency-line"></i>
             <div>
@@ -55,6 +59,7 @@ const LookingForDriver = (props) => {
             </div>
           </div>
         </div>
+        
         <button className='w-full bg-red-500 text-white font-medium p-2 rounded-lg'
           onClick={props.onCancel}>Cancel Ride</button>
       </div>

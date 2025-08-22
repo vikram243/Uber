@@ -3,6 +3,8 @@ const { validationResult } = require('express-validator');
 const mapsService = require('../services/maps.service');
 const Ride = require('../models/ride.model');
 
+// Helper function to calculate fare based on distance, duration, and vehicle type
+// It checks if the locations and vehicle type are valid, calculates fare based on distance and duration
 async function getFare(destination, pickup, vehicleType) {
 
     if (!destination || !pickup) {
@@ -54,6 +56,8 @@ async function getFare(destination, pickup, vehicleType) {
     return Number(fare.toFixed(2));
 }
 
+// Create a new ride
+// It validates the input, checks if the ride already exists, calculates fare, and creates a
 module.exports.createRide = async (req, res) => {
     try {
         const errors = validationResult(req);
@@ -93,6 +97,8 @@ module.exports.createRide = async (req, res) => {
     }
 }
 
+// Get ride details by ID
+// It checks if the ride exists, populates captain details, and returns the ride information
 module.exports.getRide = async (req, res) => {
     try {
         const { id } = req.params;
@@ -114,6 +120,8 @@ module.exports.getRide = async (req, res) => {
     }
 }
 
+// Get all rides for the authenticated user
+// It checks if the user is authenticated and returns all rides associated with the user
 module.exports.cancelRide = async (req, res) => {
     try {
         const { id } = req.params;
@@ -134,6 +142,8 @@ module.exports.cancelRide = async (req, res) => {
     }
 }
 
+// Accept a ride by captain
+// It checks if the ride exists, if it's pending, and assigns the captain to the ride
 module.exports.acceptRide = async (req, res) => {
     try {
         const { id } = req.params;

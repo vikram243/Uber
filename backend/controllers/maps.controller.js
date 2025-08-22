@@ -1,6 +1,8 @@
 const mapsService = require('../services/maps.service');
 const { validationResult } = require('express-validator');
 
+// Get coordinates for a given address
+// It validates the input, checks if the address is provided, and returns the coordinates
 module.exports.getCoordinates = async (req, res) => {
     // Validate request parameters
     const errors = validationResult(req);
@@ -28,6 +30,8 @@ module.exports.getCoordinates = async (req, res) => {
     }
 }
 
+// Get distance and time between two locations
+// It validates the input, checks if both origin and destination are provided, and returns the distance
 module.exports.getDistanceTime = async (req, res) => {
     // Validate request parameters
     const errors = validationResult(req);
@@ -58,6 +62,8 @@ module.exports.getDistanceTime = async (req, res) => {
     }
 }
 
+// Get suggestions for a given input
+// It validates the input, checks if the input is provided, and returns suggestions
 module.exports.getSuggestions = async (req, res) => {
     // Validate request parameters
     const errors = validationResult(req);

@@ -11,11 +11,15 @@ const UserProtectedWrapper = ({
   const { setUserData } = useContext(UserDataContext)
   const [, setLoading] = useState(true)
 
+  // Effect to check if the token is valid and fetch user data
+  // If the token is invalid or not present, it redirects to the home page
   useEffect(() => {
     if (!token || token === undefined || token === null) {
       navigate('/')
     }
 
+    // Function to fetch user data
+    // It sends a GET request to the server with the token in the headers
     const fetchUserData = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {

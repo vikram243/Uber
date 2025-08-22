@@ -11,6 +11,7 @@ const VehiclePanel = (props) => {
   const abortRef = useRef(null)
   const timeoutRef = useRef(null)
 
+  // Fetch fares when pickup or drop-off changes
   useEffect(() => {
     let cancelled = false
     const computeFares = async () => {
@@ -70,6 +71,7 @@ const VehiclePanel = (props) => {
     return () => { cancelled = true }
   }, [canQuote, props.pickupLocation, props.dropOffLocation])
 
+  // Create ride with selected vehicle type and image
   const createRide = async (vehicleType, vehicleImage) => {
     try {
       const { data } = await api.post('/rides/create', {
@@ -94,6 +96,7 @@ const VehiclePanel = (props) => {
     }
   }
 
+  // Check if no rides are available
   const noRidesAvailable = attemptedQuote && !isQuoting && (!!fareError || (fares.car === null && fares.bike === null && fares.auto === null))
 
   return (
@@ -101,6 +104,7 @@ const VehiclePanel = (props) => {
       <i className="ri-arrow-down-s-line absolute right-4"
         onClick={() => props.setVehiclePanelOpen(false)}
       ></i>
+
       {noRidesAvailable && (
         <div className='flex justify-between h-38 bg-gray-200 rounded-lg items-center mt-8 p-4'>
           <i className="ri-error-warning-line text-xl mr-3 text-red-500"></i>
@@ -110,12 +114,15 @@ const VehiclePanel = (props) => {
           </div>
         </div>
       )}
+
       {isQuoting && (
         <div className='text-xl h-56 text-gray-500'>Fetching fares…</div>
       )}
+
       {!noRidesAvailable && !isQuoting && fareError && (
         <div className='text-xs text-red-600'>{fareError}</div>
       )}
+      
       {(canQuote && !noRidesAvailable && !isQuoting) && (
         <>
           <h2 className='font-bold text-xl'>Choose a vehicle</h2>

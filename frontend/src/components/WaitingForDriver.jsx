@@ -23,6 +23,7 @@ const WaitingForDriver = (props) => {
               <p className='text-sm -mt-1 text-gray-600'>{ride?.pickup || '-'}</p>
             </div>
           </div>
+
           <div className='flex items-center gap-5 p-3 border-b-1 border-gray-300'>
             <i className="text-lg ri-map-pin-2-fill"></i>
             <div>
@@ -30,6 +31,7 @@ const WaitingForDriver = (props) => {
               <p className='text-sm -mt-1 text-gray-600'>{ride?.destination || '-'}</p>
             </div>
           </div>
+
           <div className='flex items-center gap-5 p-3'>
             <i className="ri-currency-line"></i>
             <div>
@@ -38,6 +40,7 @@ const WaitingForDriver = (props) => {
             </div>
           </div>
         </div>
+        
         <button className='w-full bg-red-500 text-white font-medium p-2 rounded-lg'
           onClick={() => { props.setWaitingForDriverPannel(false) }}>Cancel Ride</button>
       </div>

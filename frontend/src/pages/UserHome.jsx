@@ -34,8 +34,12 @@ const UserHome = () => {
   const VehicleFoundPanelRef = useRef(null)
   const WaitingForDriverPannelRef = useRef(null)
 
+  // Navigate hook to redirect after ride ends
+  // It will be used in the Riding component to navigate back to home
   const navigate = useNavigate()
 
+  // Function to handle form submission
+  // It prevents the default form submission behavior
   const submitHandler = (e) => {
     e.preventDefault()
   }

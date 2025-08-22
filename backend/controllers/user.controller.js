@@ -3,6 +3,8 @@ const { validationResult } = require('express-validator');
 const userService = require('../services/user.service');
 const blackListTokenModel = require('../models/blackListToken.model');
 
+// register a new user
+// It validates the input, checks if the user already exists, hashes the password, and creates
 const registerUser = async (req, res) => {
     try {
         const { fullname, email, password } = req.body;
@@ -45,6 +47,8 @@ const registerUser = async (req, res) => {
     }
 }
 
+// login a user
+// It validates the input, checks if the user exists, compares the password, and generates a
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -88,6 +92,8 @@ const loginUser = async (req, res) => {
   }
 }
 
+// logout a user
+// It invalidates the user's token by adding it to the blacklist and clears the cookie
 const logoutUser = async (req, res) => {
     try {
     const token = req.cookies?.token || req.headers['authorization']?.split(' ')[1];
@@ -103,6 +109,8 @@ const logoutUser = async (req, res) => {
     }
 }
 
+// get user profile
+// It retrieves the authenticated user's profile, excluding sensitive information like password
 const getUserProfile = async (req, res) => {
   try {
     const user = req.user;

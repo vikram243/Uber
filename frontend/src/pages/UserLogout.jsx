@@ -3,9 +3,14 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
 const UserLogout = () => {
+
+  // Retrieve the token from localStorage
+  // It will be used to authenticate the logout request
   const token = localStorage.getItem('token')
   const navigate = useNavigate()
 
+  // Effect to handle logout
+  // It sends a GET request to the server to log out the user
   useEffect(() => {
     const doLogout = async () => {
       try {

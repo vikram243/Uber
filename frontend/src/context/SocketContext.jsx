@@ -4,6 +4,8 @@ import { io } from 'socket.io-client'
 // eslint-disable-next-line react-refresh/only-export-components
 export const SocketContext = createContext(null)
 
+// SocketProvider component to manage socket connection and provide context
+// This component handles the connection to the server, manages the socket state,
 const SocketProvider = ({ children }) => {
   const socketRef = useRef(null)
   const [connected, setConnected] = useState(false)
@@ -13,27 +15,48 @@ const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     console.log('SocketProvider: connecting to', SERVER_URL)
-    const socket = io(SERVER_URL, {
+
+    // Try websocket first; if connect_error occurs, fallback to long-polling
+    let socket = io(SERVER_URL, {
       transports: ['websocket'],
       reconnectionAttempts: 5,
     })
-
     socketRef.current = socket
 
-    socket.on('connect', () => {
-      console.log('Socket connected', socket.id)
-      setConnected(true)
-    })
+    // Setup listeners for socket events
+    const setupListeners = (s) => {
+      s.on('connect', () => {
+        console.log('Socket connected', s.id)
+        setConnected(true)
+      })
 
-    socket.on('disconnect', (reason) => {
-      console.log('Socket disconnected', reason)
-      setConnected(false)
-    })
+      // Handle disconnection
+      s.on('disconnect', (reason) => {
+        console.log('Socket disconnected', reason)
+        setConnected(false)
+      })
 
-    socket.on('connect_error', (err) => {
-      console.error('Socket connect_error', err)
-    })
+      // Handle connection errors
+      s.on('connect_error', (err) => {
+        console.error('Socket connect_error', err)
+        // If websocket transport fails, try polling as a safer fallback
+        const triedWebsocket = s.io && s.io.opts && Array.isArray(s.io.opts.transports) && s.io.opts.transports.includes('websocket')
+        if (triedWebsocket) {
+          console.log('SocketProvider: websocket failed, falling back to polling transport')
+          try {
+            s.disconnect()
+          } catch (e) {
+            console.warn('Error disconnecting failed websocket socket', e)
+          }
+          socket = io(SERVER_URL, { transports: ['polling'], reconnectionAttempts: 5 })
+          socketRef.current = socket
+          setupListeners(socket)
+        }
+      })
+    }
+    setupListeners(socket)
 
+    // Cleanup function to disconnect socket when component unmounts
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect()
@@ -64,6 +87,8 @@ const SocketProvider = ({ children }) => {
     }
   }, [])
 
+  // Context value to be provided to children components
+  // This includes sendMessage, subscribe, and the connected state
   const value = {
     sendMessage,
     subscribe,

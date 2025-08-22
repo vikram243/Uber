@@ -13,6 +13,8 @@ const UserSignup = () => {
   const { setUserData } = useContext(UserDataContext)
   const navigate = useNavigate()
 
+  // Function to handle form submission
+  // It sends a POST request to the server with the user's details
   const submitHandler = async (e) => {
     e.preventDefault()
     const newUser = {
@@ -58,6 +60,7 @@ const UserSignup = () => {
               type="text"
               placeholder='First name'
             />
+            
             <input className='bg-[#eeeeee] py-2 px-4 border rounded-xl w-1/2 mb-4'
               value={lastName}
               onChange={(e => setLastName(e.target.value))}
@@ -66,6 +69,7 @@ const UserSignup = () => {
               placeholder='Last name'
             />
           </div>
+          
           <h2 className='mb-2 ml-2 font-semibold'>What's your email</h2>
           <input className='bg-[#eeeeee] py-2 px-4 border rounded-xl w-full mb-4'
             value={email}

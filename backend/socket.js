@@ -3,6 +3,8 @@ const captainModel = require('./models/captain.model');
 
 let io = null;
 
+// Function to initialize socket.io with the server
+// This function sets up the socket.io server and handles connection events
 function initializeSocket(server) {
     if (io) return io;
     const { Server } = require('socket.io');
@@ -55,6 +57,8 @@ function initializeSocket(server) {
     return io;
 }
 
+// Function to send a message to a specific socket ID
+// This function allows sending events to a specific socket, useful for targeted notifications
 function sendMessageToSocketId(socketId, event, data) {
     if (!io) {
         throw new Error('Socket.io not initialized. Call initializeSocket(server) first.');
@@ -62,6 +66,8 @@ function sendMessageToSocketId(socketId, event, data) {
     io.to(socketId).emit(event, data);
 }
 
+// Function to get the current socket.io instance
+// This function is useful for accessing the socket instance in other parts of the application
 function getIo() {
     return io;
 }
