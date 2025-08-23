@@ -6,8 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "copy-redirects": "copyfiles public/_redirects dist",
-    "postbuild": "npm run copy-redirects",
     "lint": "eslint .",
     "preview": "vite preview"
   },
