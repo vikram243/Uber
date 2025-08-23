@@ -1,11 +1,10 @@
 import React, { useContext, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../lib/api'
 import { UserDataContext } from '../context/UserDataContext'
 
 
 const UserSignup = () => {
-  const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:4000'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -25,7 +24,7 @@ const UserSignup = () => {
       email,
       password
     }
-    await axios.post(`${BASE_URL}/users/register`, newUser)
+    await api.post(`/api/users/register`, newUser)
       .then((response) => {
         if (response.status === 201) {
           const data = response.data

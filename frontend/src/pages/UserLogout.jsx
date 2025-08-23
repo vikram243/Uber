@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import axios from 'axios'
+import api from '../lib/api'
 import { useNavigate } from 'react-router-dom'
 
 const UserLogout = () => {
@@ -14,7 +14,7 @@ const UserLogout = () => {
   useEffect(() => {
     const doLogout = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/logout`, {
+        const response = await api.get(`/api/users/logout`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         })

@@ -1,5 +1,5 @@
-const userModel = require('./models/user.model');
-const captainModel = require('./models/captain.model');
+import userModel from '../models/user.model.js';
+import captainModel from '../models/captain.model.js';
 
 let io = null;
 
@@ -72,4 +72,4 @@ function getIo() {
     return io;
 }
 
-module.exports = { initializeSocket, sendMessageToSocketId, getIo };
+export default { initializeSocket, sendMessageToSocketId, getIo };

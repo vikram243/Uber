@@ -1,7 +1,7 @@
-const userModel = require('../models/user.model');
-const { validationResult } = require('express-validator');
-const userService = require('../services/user.service');
-const blackListTokenModel = require('../models/blackListToken.model');
+import userModel from '../models/user.model.js';
+import { validationResult } from 'express-validator';
+import userService from '../services/user.service.js';
+import blackListTokenModel from '../models/blackListToken.model.js';
 
 // register a new user
 // It validates the input, checks if the user already exists, hashes the password, and creates
@@ -124,7 +124,7 @@ const getUserProfile = async (req, res) => {
   }
 }
 
-module.exports = {
+export default  {
     registerUser,
     loginUser,
     logoutUser,

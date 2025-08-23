@@ -21,7 +21,7 @@ const VehiclePanel = (props) => {
         if (abortRef.current) abortRef.current.abort()
         const controller = new AbortController()
         abortRef.current = controller
-        const { data } = await api.get('/maps/distanceTime', {
+        const { data } = await api.get('/api/maps/distanceTime', {
           params: {
             origin: props.pickupLocation,
             destination: props.dropOffLocation,
@@ -74,7 +74,7 @@ const VehiclePanel = (props) => {
   // Create ride with selected vehicle type and image
   const createRide = async (vehicleType, vehicleImage) => {
     try {
-      const { data } = await api.post('/rides/create', {
+      const { data } = await api.post('/api/rides/create', {
         pickup: props.pickupLocation,
         destination: props.dropOffLocation,
         vehicleType,

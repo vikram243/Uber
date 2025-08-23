@@ -1,7 +1,7 @@
-const rideService = require('../services/ride.service');
-const { validationResult } = require('express-validator');
-const mapsService = require('../services/maps.service');
-const Ride = require('../models/ride.model');
+import rideService from '../services/ride.service.js';
+import { validationResult } from 'express-validator';
+import mapsService from '../services/maps.service.js';
+import Ride from '../models/ride.model.js';
 
 // Helper function to calculate fare based on distance, duration, and vehicle type
 // It checks if the locations and vehicle type are valid, calculates fare based on distance and duration
@@ -58,7 +58,7 @@ async function getFare(destination, pickup, vehicleType) {
 
 // Create a new ride
 // It validates the input, checks if the ride already exists, calculates fare, and creates a
-module.exports.createRide = async (req, res) => {
+const createRide = async (req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -99,7 +99,7 @@ module.exports.createRide = async (req, res) => {
 
 // Get ride details by ID
 // It checks if the ride exists, populates captain details, and returns the ride information
-module.exports.getRide = async (req, res) => {
+const getRide = async (req, res) => {
     try {
         const { id } = req.params;
         const ride = await Ride.findById(id)
@@ -122,7 +122,7 @@ module.exports.getRide = async (req, res) => {
 
 // Get all rides for the authenticated user
 // It checks if the user is authenticated and returns all rides associated with the user
-module.exports.cancelRide = async (req, res) => {
+const cancelRide = async (req, res) => {
     try {
         const { id } = req.params;
         const ride = await Ride.findById(id);
@@ -144,7 +144,7 @@ module.exports.cancelRide = async (req, res) => {
 
 // Accept a ride by captain
 // It checks if the ride exists, if it's pending, and assigns the captain to the ride
-module.exports.acceptRide = async (req, res) => {
+const acceptRide = async (req, res) => {
     try {
         const { id } = req.params;
         const ride = await Ride.findById(id);
@@ -164,4 +164,11 @@ module.exports.acceptRide = async (req, res) => {
         console.error('Error accepting ride:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
+}
+
+export default {
+    createRide,
+    getRide,
+    cancelRide,
+    acceptRide
 }

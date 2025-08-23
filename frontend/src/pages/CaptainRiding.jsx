@@ -13,7 +13,7 @@ const CaptainRiding = () => {
   const rideDetailsPanelRef = useRef(null)
   const completeRideRef = useRef(null)
 
-  /* otpPanel Animation */ 
+  /* otpPanel Animation */
   useGSAP(() => {
     // ensure the DOM node exists before animating (prevents GSAP "target null not found")
     if (!otpPanelRef.current) return
@@ -54,13 +54,13 @@ const CaptainRiding = () => {
 
   return (
     <div className='h-screen w-screen overflow-hidden relative'>
-      /* Logo */
+      {/* Logo */}
       <div className='flex absolute items-center '>
         <img className='w-17 mt-7 mb-8 ml-5' src="https://1000logos.net/wp-content/uploads/2021/04/Uber-logo.png" alt="Uber" />
         <img className='w-6 ml-1' src="https://th.bing.com/th/id/R.7c9170d585fd3562fdf8ce1d49fd7410?rik=NleSh8FIn3wZzQ&riu=http%3a%2f%2fpngimg.com%2fuploads%2fuber%2fuber_PNG13.png&ehk=qmQ99VMq88QwqC5C9VL%2f7b9hZqS5EvFF0kDjGQLgyQE%3d&risl=&pid=ImgRaw&r=0" alt="Captain" />
       </div>
 
-      /* Map */
+      {/* Map */}
       <div className='w-full h-5/6'>
         <img
           className='object-cover h-full w-full'
@@ -69,14 +69,14 @@ const CaptainRiding = () => {
         />
       </div>
 
-      /* Ride Details */
+      {/* Ride Details */}
       <RideDetailsCaptainRiding
         ref={rideDetailsPanelRef}
         setOtpPanel={setOtpPanel}
         setRideDetailsPanel={setRideDetailsPanel}
       />
 
-      /* Otp */
+      {/* Otp */}
       <VerifyOtp
         ref={otpPanelRef}
         setOtpPanel={setOtpPanel}
@@ -84,7 +84,7 @@ const CaptainRiding = () => {
         setCompleteRide={setCompleteRide}
       />
 
-      /* Complete Ride */
+      {/* Complete Ride */}
       <CompleteRide
         ref={completeRideRef}
         setCompleteRide={setCompleteRide}

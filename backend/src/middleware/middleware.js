@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken');
-const blackListTokenModel = require('../models/blackListToken.model');
-const userModel = require('../models/user.model');
-const captainModel = require('../models/captain.model');
+import jwt from 'jsonwebtoken';
+import blackListTokenModel from '../models/blackListToken.model.js';
+import userModel from '../models/user.model.js';
+import captainModel from '../models/captain.model.js';
 
 // Extract token from cookie or authorization header
 // It checks for a token in the request cookies or headers and returns it
@@ -55,4 +55,4 @@ async function handleAuth(req, res, next, model, attachKey) {
 const authUser = (req, res, next) => handleAuth(req, res, next, userModel, 'user');
 const authCaptain = (req, res, next) => handleAuth(req, res, next, captainModel, 'captain');
 
-module.exports = { authUser, authCaptain };
+export default { authUser, authCaptain };

@@ -1,9 +1,9 @@
-const mapsService = require('../services/maps.service');
-const { validationResult } = require('express-validator');
+import mapsService from '../services/maps.service.js';
+import { validationResult } from 'express-validator';
 
 // Get coordinates for a given address
 // It validates the input, checks if the address is provided, and returns the coordinates
-module.exports.getCoordinates = async (req, res) => {
+const getCoordinates = async (req, res) => {
     // Validate request parameters
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -32,7 +32,7 @@ module.exports.getCoordinates = async (req, res) => {
 
 // Get distance and time between two locations
 // It validates the input, checks if both origin and destination are provided, and returns the distance
-module.exports.getDistanceTime = async (req, res) => {
+const getDistanceTime = async (req, res) => {
     // Validate request parameters
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -64,7 +64,7 @@ module.exports.getDistanceTime = async (req, res) => {
 
 // Get suggestions for a given input
 // It validates the input, checks if the input is provided, and returns suggestions
-module.exports.getSuggestions = async (req, res) => {
+const getSuggestions = async (req, res) => {
     // Validate request parameters
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -89,4 +89,10 @@ module.exports.getSuggestions = async (req, res) => {
         console.error('Error fetching suggestions:', error);
         return res.status(500).json({ message: 'Internal server error' });
     }
+}
+
+export default {
+    getCoordinates,
+    getDistanceTime,
+    getSuggestions
 }

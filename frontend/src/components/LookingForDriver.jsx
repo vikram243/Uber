@@ -10,7 +10,7 @@ const LookingForDriver = (props) => {
     let cancelled = false
     const interval = setInterval(async () => {
       try {
-        const { data } = await api.get(`/rides/${ride._id}`)
+        const { data } = await api.get(`/api/rides/${ride._id}`)
         if (!cancelled && data?.status === 'accepted') {
           props.onAccepted && props.onAccepted(data)
         }

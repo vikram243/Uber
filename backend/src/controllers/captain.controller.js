@@ -1,7 +1,7 @@
-const captainModel = require('../models/captain.model');
-const captainService = require('../services/captain.service');
-const { validationResult } = require('express-validator');
-const blackListTokenModel = require('../models/blackListToken.model');
+import captainModel from '../models/captain.model.js';
+import captainService from '../services/captain.service.js';
+import { validationResult } from 'express-validator';
+import blackListTokenModel from '../models/blackListToken.model.js';
 
 // register a new captain
 // It validates the input, checks if the captain already exists, hashes the password, and creates a new captain with the provided details
@@ -129,7 +129,7 @@ const getCaptainProfile = async (req, res) => {
     }
 }
 
-module.exports = {
+export default {
     registerCaptain,
     loginCaptain,
     logoutCaptain,

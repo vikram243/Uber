@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const rideSchema = new mongoose.Schema({
     pickup: {
@@ -65,4 +65,4 @@ const rideSchema = new mongoose.Schema({
 })
 
 const Ride = mongoose.model('Ride', rideSchema);
-module.exports = Ride;
+export default Ride;

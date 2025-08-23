@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CaptainDataContext } from '../context/CaptainDataContext'
-import axios from 'axios'
+import api from '../lib/api'
 
 const CaptainProtectedWrapper = ({
   children
@@ -22,7 +22,7 @@ const CaptainProtectedWrapper = ({
     // It sends a GET request to the server with the token in the headers
     const fetchCaptainData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/captains/profile`, {
+        const response = await api.get(`/api/captains/profile`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

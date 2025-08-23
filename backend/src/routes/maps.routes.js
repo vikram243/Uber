@@ -1,17 +1,17 @@
-const express = require('express');
+import { asyncHandler } from '../utils/asyncHandler.js';
+import express from 'express';
 const router = express.Router();    
-const authMiddleware = require('../lib/middleware');
-const mapController = require('../controllers/maps.controller.js');
-const { query } = require('express-validator');
+import authMiddleware from '../middleware/middleware.js';
+import mapController from '../controllers/maps.controller.js';
+import { query } from 'express-validator';
 
 // Define routes for maps operations
 // It retrieves coordinates for a given address, distance and time between two locations, and suggestions for a given input
-
 router.get(
     '/coordinates',
     [ query('address').notEmpty().isString() ],
-    authMiddleware.authUser,
-    mapController.getCoordinates
+    asyncHandler(authMiddleware.authUser),
+    asyncHandler(mapController.getCoordinates)
 );
 
 // Get distance and time between two locations
@@ -20,8 +20,8 @@ router.get(
     '/distanceTime',
     [ query('origin').notEmpty().isString(),
       query('destination').notEmpty().isString() ],
-    authMiddleware.authUser,
-    mapController.getDistanceTime
+    asyncHandler(authMiddleware.authUser),
+    asyncHandler(mapController.getDistanceTime)
 )
 
 // Get suggestions for a given input
@@ -29,8 +29,8 @@ router.get(
 router.get(
     '/suggestions',
     [ query('input').notEmpty().isString() ],
-    authMiddleware.authUser,
-    mapController.getSuggestions
+    asyncHandler(authMiddleware.authUser),
+    asyncHandler(mapController.getSuggestions)
 )
 
-module.exports = router;
+export default router;

@@ -4,7 +4,6 @@ import { UserDataContext } from '../context/UserDataContext'
 import api from '../lib/api'
 
 const UserLogin = () => {
-  const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:4000'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const { setUserData } = useContext(UserDataContext)
@@ -20,7 +19,7 @@ const UserLogin = () => {
     }
     
     try {
-      const response = await api.post(`/users/login`, userData)
+      const response = await api.post(`/api/users/login`, userData)
       if (response.status === 200) {
         const data = response.data
         setUserData(data.user)

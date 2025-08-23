@@ -11,7 +11,7 @@ const LocationSearchPanel = (props) => {
     if (!input || input.length < 2) { setSuggestions([]); return }
     setIsLoading(true)
     try {
-      const { data } = await api.get('/maps/suggestions', { params: { input } })
+      const { data } = await api.get('/api/maps/suggestions', { params: { input } })
       setSuggestions(data)
     } catch (err) {
       console.error('Failed to fetch suggestions', err)

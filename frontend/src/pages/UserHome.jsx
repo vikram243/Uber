@@ -98,7 +98,7 @@ const UserHome = () => {
     let cancelled = false
     const interval = setInterval(async () => {
       try {
-        const { data } = await api.get(`/rides/${ride._id}`)
+        const { data } = await api.get(`/api/rides/${ride._id}`)
         if (!cancelled) {
           setRide(data)
           if (data.status === 'in_progress') {
@@ -172,7 +172,7 @@ const UserHome = () => {
         ride={ride}
         onCancel={async () => {
           try {
-            const resp = await api.post(`/rides/${ride?._id}/cancel`)
+            const resp = await api.post(`/api/rides/${ride?._id}/cancel`)
             if (resp.status === 200) {
               setRide(null)
               setVehicleFound(false)

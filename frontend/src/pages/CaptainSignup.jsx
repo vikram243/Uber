@@ -1,10 +1,9 @@
 import React, { useState, useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../lib/api'
 import { CaptainDataContext } from '../context/CaptainDataContext'
 
 const CaptainSignup = () => {
-  const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:4000'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [color, setColor] = useState('')
@@ -56,7 +55,7 @@ const CaptainSignup = () => {
       },
     }
 
-    await axios.post(`${BASE_URL}/captains/register`, captainData)
+    await api.post(`/api/captains/register`, captainData)
       .then((response) => {
         if (response.status === 201) {
           const data = response.data
