@@ -30,14 +30,17 @@ const UserProtectedWrapper = ({
         })
         if (response.status === 200) {
           // backend returns { message, user } — store the user object
-          setUserData(response.data.user)
+          setUserData(response.data)
+          localStorage.setItem('_UserId', response.data.user._id)
         } else {
           localStorage.removeItem('token')
+          localStorage.removeItem('_UserId')
           navigate('/')
         }
       } catch (error) {
         console.error('Error fetching user data:', error)
         localStorage.removeItem('token')
+        localStorage.removeItem('_UserId')
         navigate('/')
       } finally {
         setLoading(false)

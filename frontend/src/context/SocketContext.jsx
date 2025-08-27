@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const SocketContext = createContext(null);
 
 const SocketProvider = ({ children }) => {
@@ -12,12 +11,12 @@ const SocketProvider = ({ children }) => {
   const SERVER_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:3000';
 
   useEffect(() => {
-    console.log('SocketProvider: connecting to', SERVER_URL);
-
     const socket = io(SERVER_URL, {
-      transports: ['websocket'],
+      transports: ['websocket', 'polling'],
       withCredentials: true,
       reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      forceNew: true, // Ensure a new connection on each mount
     });
 
     socketRef.current = socket;
@@ -34,33 +33,26 @@ const SocketProvider = ({ children }) => {
       });
 
       s.on('connect_error', (err) => {
-        console.error('Socket connect_error', err);
-        // If websocket fails, fallback to polling
-        if (s.io?.opts?.transports?.includes('websocket')) {
-          console.log('SocketProvider: websocket failed, falling back to polling');
-          try {
-            s.disconnect();
-          } catch (e) {
-            console.warn('Error disconnecting failed websocket socket', e);
-          }
-          const fallback = io(SERVER_URL, {
-            transports: ['polling'],
-            withCredentials: true,
-            reconnectionAttempts: 5,
-          });
-          socketRef.current = fallback;
-          setupListeners(fallback);
-        }
+        console.error('Socket connect_error:', err.message || err);
+      });
+
+      s.on('pong', () => {
+        console.log('Received pong from server');
       });
     };
 
     setupListeners(socket);
 
+    // Test connection with ping
+    socket.emit('ping', (response) => {
+      console.log('Ping response:', response);
+    });
+
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current = null;
-        console.log('SocketProvider: disconnected');
+        console.log('SocketProvider: Disconnected');
       }
     };
   }, [SERVER_URL]);

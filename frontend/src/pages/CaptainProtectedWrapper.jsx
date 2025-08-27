@@ -28,14 +28,17 @@ const CaptainProtectedWrapper = ({
           }
         })
         if (response.status === 200) {
-          setCaptain(response.data.captain)
+          setCaptain(response.data)
+          localStorage.setItem('_CaptainId', response.data.captain._id)
         } else {
           localStorage.removeItem('token')
+          localStorage.removeItem('_CaptainId')
           navigate('/')
         }
       } catch (error) {
         console.error('Error fetching captain data:', error)
         localStorage.removeItem('token')
+        localStorage.removeItem('_CaptainId')
         navigate('/')
       } finally {
         setLoading(false)

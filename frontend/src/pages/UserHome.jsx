@@ -1,123 +1,133 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { useGSAP } from '@gsap/react'
-import { gsap } from 'gsap'
-import { Link, useNavigate } from 'react-router-dom'
-import 'remixicon/fonts/remixicon.css'
-import LocationSearchPanel from '../components/LocationSearchPanel'
-import VehiclePanel from '../components/VehiclePanel'
-import LookingForDriver from '../components/LookingForDriver'
-import WaitingForDriver from '../components/WaitingForDriver'
-import api from '../lib/api'
-import { SocketContext } from '../context/SocketContext'
-import { UserDataContext } from '../context/UserDataContext'
+import React, { useRef, useState, useEffect } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
+import { Link, useNavigate } from 'react-router-dom';
+import 'remixicon/fonts/remixicon.css';
+import LocationSearchPanel from '../components/LocationSearchPanel';
+import VehiclePanel from '../components/VehiclePanel';
+import LookingForDriver from '../components/LookingForDriver';
+import WaitingForDriver from '../components/WaitingForDriver';
+import api from '../lib/api';
+import { SocketContext } from '../context/SocketContext';
+import { UserDataContext } from '../context/UserDataContext';
 
 const UserHome = () => {
-  const [pickupLocation, setPickupLocation] = useState('')
-  const [dropOffLocation, setDropOffLocation] = useState('')
-  const [panelOpen, setPanelOpen] = useState(false)
-  const [vehiclePanelOpen, setVehiclePanelOpen] = useState(false)
-  const [vehicleFound, setVehicleFound] = useState(false)   // for LookingForDriver
-  const [selectedVehicleImage, setSelectedVehicleImage] = useState(null)
-  const [ride, setRide] = useState(null)
-  const [WaitingForDriverPannel, setWaitingForDriverPannel] = useState(false)
-  const { sendMessage } = React.useContext(SocketContext)
-  const { userData } = React.useContext(UserDataContext)
+  const [pickupLocation, setPickupLocation] = useState('');
+  const [dropOffLocation, setDropOffLocation] = useState('');
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [vehiclePanelOpen, setVehiclePanelOpen] = useState(false);
+  const [vehicleFound, setVehicleFound] = useState(false);
+  const [selectedVehicleImage, setSelectedVehicleImage] = useState(null);
+  const [ride, setRide] = useState(null);
+  const [WaitingForDriverPannel, setWaitingForDriverPannel] = useState(false);
+  const { sendMessage, connected } = React.useContext(SocketContext);
+  const { userData } = React.useContext(UserDataContext);
+  const hasJoined = useRef(false);
 
-  // only send join when we have a userId
   useEffect(() => {
-    if (!userData?._id) return
-    sendMessage('join', { userId: userData._id, role: 'user' })
-  }, [sendMessage, userData])
+    const id = localStorage.getItem('_UserId')
+    if (!id) {
+      console.warn('UserHome: No user ID available');
+      return;
+    }
+    if (!connected) {
+      console.warn('UserHome: Socket not connected');
+      return;
+    }
+    if (hasJoined.current) {
+      console.warn('UserHome: Join already sent');
+      return;
+    }
+    sendMessage('join', { userId: id, role: 'user' });
+    hasJoined.current = true;
+    return () => {
+      hasJoined.current = false;
+    };
+  }, [sendMessage, userData, connected]);
 
-  const panelRef = useRef(null)
-  const VehiclePanelRef = useRef(null)
-  const VehicleFoundPanelRef = useRef(null)
-  const WaitingForDriverPannelRef = useRef(null)
+  const panelRef = useRef(null);
+  const VehiclePanelRef = useRef(null);
+  const VehicleFoundPanelRef = useRef(null);
+  const WaitingForDriverPannelRef = useRef(null);
 
-  // Navigate hook to redirect after ride ends
-  // It will be used in the Riding component to navigate back to home
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  // Function to handle form submission
-  // It prevents the default form submission behavior
   const submitHandler = (e) => {
-    e.preventDefault()
-  }
+    e.preventDefault();
+  };
 
-  // Vehicle panel animation
   useGSAP(() => {
     gsap.to(VehiclePanelRef.current, {
       transform: vehiclePanelOpen ? 'translateY(0%)' : 'translateY(100%)',
       duration: 0.5,
       ease: 'power2.inOut',
       zIndex: vehiclePanelOpen ? 3 : 2,
-    })
-  }, [vehiclePanelOpen])
+    });
+  }, [vehiclePanelOpen]);
 
-  // LookingForDriver panel animation
   useGSAP(() => {
     gsap.to(VehicleFoundPanelRef.current, {
       transform: vehicleFound ? 'translateY(0%)' : 'translateY(100%)',
       duration: 0.5,
       ease: 'power2.inOut',
       zIndex: vehicleFound ? 4 : 2,
-    })
-  }, [vehicleFound])
+    });
+  }, [vehicleFound]);
 
-  // Search panel animation
   useGSAP(() => {
     gsap.to(panelRef.current, {
       height: panelOpen ? '70%' : '0%',
       display: panelOpen ? 'block' : 'none',
       duration: 0.5,
       ease: 'power2.inOut',
-    })
+    });
     gsap.to('.nav', {
       zIndex: panelOpen ? 2 : 3,
-    })
+    });
     gsap.to('.arrow', {
       opacity: panelOpen ? 1 : 0,
       duration: 0.5,
       ease: 'power2.inOut',
-    })
-  }, [panelOpen])
+    });
+  }, [panelOpen]);
 
-  // WaitingForDriver panel animation
   useGSAP(() => {
     gsap.to(WaitingForDriverPannelRef.current, {
       transform: WaitingForDriverPannel ? 'translateY(0%)' : 'translateY(100%)',
       duration: 0.5,
       ease: 'power2.inOut',
       zIndex: WaitingForDriverPannel ? 4 : 2,
-    })
-  }, [WaitingForDriverPannel])
+    });
+  }, [WaitingForDriverPannel]);
 
-  // 🔹 Poll ride status when WaitingForDriver is open
   useEffect(() => {
-    if (!ride?._id || !WaitingForDriverPannel) return
-    let cancelled = false
+    if (!ride?._id || !WaitingForDriverPannel) return;
+    let cancelled = false;
     const interval = setInterval(async () => {
       try {
-        const { data } = await api.get(`/api/rides/${ride._id}`)
+        const { data } = await api.get(`/api/rides/${ride._id}`);
         if (!cancelled) {
-          setRide(data)
+          setRide(data);
           if (data.status === 'in_progress') {
-            clearInterval(interval)
-            navigate('/riding')  // ✅ only after OTP verified
+            clearInterval(interval);
+            navigate('/riding');
           }
         }
       } catch (err) {
-        console.error('Polling ride failed', err)
+        console.error('Polling ride failed', err);
       }
-    }, 4000)
+    }, 4000);
 
-    return () => { cancelled = true; clearInterval(interval) }
-  }, [ride?._id, WaitingForDriverPannel, navigate])
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [ride?._id, WaitingForDriverPannel, navigate]);
 
   return (
     <div className='relative h-screen w-screen overflow-hidden'>
       <img
-        className='nav logo w-17 mt-7 ml-5 absolute z-3 '
+        className='nav logo w-17 mt-7 ml-5 absolute z-3'
         src="https://1000logos.net/wp-content/uploads/2021/04/Uber-logo.png"
         alt="Uber"
       />
@@ -129,7 +139,6 @@ const UserHome = () => {
         <i className="text-lg font-medium ri-logout-box-r-line"></i>
       </Link>
 
-      {/* Map */}
       <div className='map h-screen w-screen relative z-1' onClick={() => setVehiclePanelOpen(false)}>
         <img
           className='object-cover h-full w-full'
@@ -138,7 +147,6 @@ const UserHome = () => {
         />
       </div>
 
-      {/* Location Search */}
       <LocationSearchPanel
         setPanelOpen={setPanelOpen}
         setVehiclePanelOpen={setVehiclePanelOpen}
@@ -150,7 +158,6 @@ const UserHome = () => {
         setDropOffLocation={setDropOffLocation}
       />
 
-      {/* Vehicle Select Panel */}
       <VehiclePanel
         VehiclePanelRef={VehiclePanelRef}
         setVehiclePanelOpen={setVehiclePanelOpen}
@@ -159,12 +166,11 @@ const UserHome = () => {
         pickupLocation={pickupLocation}
         dropOffLocation={dropOffLocation}
         onRideCreated={(r) => {
-          setRide(r)
-          setVehicleFound(true) // show LookingForDriver
+          setRide(r);
+          setVehicleFound(true);
         }}
       />
 
-      {/* Looking For Driver */}
       <LookingForDriver
         VehicleFoundPanelRef={VehicleFoundPanelRef}
         setVehicleFound={setVehicleFound}
@@ -172,24 +178,22 @@ const UserHome = () => {
         ride={ride}
         onCancel={async () => {
           try {
-            const resp = await api.post(`/api/rides/${ride?._id}/cancel`)
+            const resp = await api.post(`/api/rides/${ride?._id}/cancel`);
             if (resp.status === 200) {
-              setRide(null)
-              setVehicleFound(false)
+              setRide(null);
+              setVehicleFound(false);
             }
           } catch (err) {
-            console.error('Failed to cancel ride', err)
+            console.error('Failed to cancel ride', err);
           }
         }}
         onAccepted={(updatedRide) => {
-          setRide(updatedRide)
-          setVehicleFound(false)          // close LookingForDriver
-          setWaitingForDriverPannel(true) // open WaitingForDriver
-          // ❌ no navigate here
+          setRide(updatedRide);
+          setVehicleFound(false);
+          setWaitingForDriverPannel(true);
         }}
       />
 
-      {/* Waiting For Driver */}
       <WaitingForDriver
         WaitingForDriverPannelRef={WaitingForDriverPannelRef}
         setWaitingForDriverPannel={setWaitingForDriverPannel}
@@ -197,7 +201,7 @@ const UserHome = () => {
         ride={ride}
       />
     </div>
-  )
-}
+  );
+};
 
-export default UserHome
+export default UserHome;

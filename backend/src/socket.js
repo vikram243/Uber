@@ -1,17 +1,18 @@
-import userModel from '../models/user.model.js';
-import captainModel from '../models/captain.model.js';
+import { Server } from 'socket.io';
+import mongoose from 'mongoose';
+import userModel from './models/user.model.js';
+import captainModel from './models/captain.model.js';
 
 let io = null;
 
-// Function to initialize socket.io with the server
-// This function sets up the socket.io server and handles connection events
 function initializeSocket(server) {
     if (io) return io;
-    const { Server } = require('socket.io');
+    console.log('Initializing socket.io...');
     io = new Server(server, {
         cors: {
             origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : true,
             credentials: true,
+            methods: ['GET', 'POST'],
         },
     });
 
@@ -21,35 +22,92 @@ function initializeSocket(server) {
         socket.on('join', async (data) => {
             try {
                 const { userId, role } = data || {};
-                if (!userId || !role) return;
+                if (!userId || !role) {
+                    console.error('Invalid join data: userId or role missing');
+                    return;
+                }
+                if (!['user', 'captain'].includes(role)) {
+                    console.error('Invalid role:', role);
+                    return;
+                }
+                let validId;
+                try {
+                    validId = new mongoose.Types.ObjectId(userId);
+                } catch (err) {
+                    console.error('Invalid userId format:', userId);
+                    return;
+                }
+                let updated = null;
+                let documentExists = null;
                 if (role === 'user') {
-                    await userModel.findByIdAndUpdate(userId, { socketId: socket.id }, { new: true });
+                    documentExists = await userModel.findById(validId);
+                    if (documentExists) {
+                        updated = await userModel.findByIdAndUpdate(
+                            validId,
+                            { socketId: socket.id },
+                            { new: true, runValidators: true }
+                        );
+                    }
                 } else if (role === 'captain') {
-                    await captainModel.findByIdAndUpdate(userId, { socketId: socket.id }, { new: true });
+                    documentExists = await captainModel.findById(validId);
+                    if (documentExists) {
+                        updated = await captainModel.findByIdAndUpdate(
+                            validId,
+                            { socketId: socket.id },
+                            { new: true, runValidators: true }
+                        );
+                    }
+                }
+                if (!documentExists) {
+                    console.error(`No ${role} found with ID: ${userId}`);
                 }
             } catch (err) {
-                // log but don't crash socket
-                // eslint-disable-next-line no-console
                 console.error('Socket join error:', err.message || err);
             }
         });
 
+        socket.on('update-location-captain', async (data) => {
+            try {
+                const { userId, role, location } = data;
+                const { lat, lng } = location || {};
+                if (!location || !lat || !lng || isNaN(lat) || isNaN(lng)) {
+                    return socket.emit('error', { message: 'Invalid location details' });
+                }
+                if (role !== 'captain') {
+                    return socket.emit('error', { message: 'Only captains can update location' });
+                }
+                const captain = await captainModel.findById(userId);
+                if (!captain) {
+                    console.log('Captain not found');
+                    return socket.emit('error', { message: 'Captain not found' });
+                }
+                await captainModel.findByIdAndUpdate(userId, {
+                    location: {
+                        type: 'Point',
+                        coordinates: [lng, lat], // [longitude, latitude]
+                    },
+                });
+                console.log(`Updated captain ${userId} location to [${lng}, ${lat}]`);
+            } catch (error) {
+                console.error('Error updating captain location:', error);
+                socket.emit('error', { message: 'Failed to update location' });
+            }
+        });
+
         socket.on('disconnect', async (reason) => {
-            // try to clear any user/captain record that references this socket id
             try {
                 await Promise.all([
                     userModel.updateOne({ socketId: socket.id }, { $unset: { socketId: 1 } }),
                     captainModel.updateOne({ socketId: socket.id }, { $unset: { socketId: 1 } }),
                 ]);
             } catch (err) {
-                // eslint-disable-next-line no-console
                 console.error('Socket disconnect cleanup error:', err.message || err);
             }
-            // eslint-disable-next-line no-console
             console.log('Socket disconnected:', socket.id, reason);
         });
 
         socket.on('ping', (cb) => {
+            console.log('Received ping event');
             if (typeof cb === 'function') cb('pong');
         });
     });
@@ -57,8 +115,6 @@ function initializeSocket(server) {
     return io;
 }
 
-// Function to send a message to a specific socket ID
-// This function allows sending events to a specific socket, useful for targeted notifications
 function sendMessageToSocketId(socketId, event, data) {
     if (!io) {
         throw new Error('Socket.io not initialized. Call initializeSocket(server) first.');
@@ -66,8 +122,6 @@ function sendMessageToSocketId(socketId, event, data) {
     io.to(socketId).emit(event, data);
 }
 
-// Function to get the current socket.io instance
-// This function is useful for accessing the socket instance in other parts of the application
 function getIo() {
     return io;
 }
