@@ -43,7 +43,7 @@ const LocationSearchPanel = (props) => {
 
           <input className='bg-[#e8e7e7] py-2 px-14 mb-4 rounded-lg w-full'
             value={props.pickupLocation}
-            onFocus={() => { setActiveField('pickup'); props.setPanelOpen(true) }}
+            onFocus={() => { setActiveField('pickup') }}
             onClick={() => props.setPanelOpen(true)}
             onChange={(e) => { props.setPickupLocation(e.target.value); fetchSuggestions(e.target.value) }}
             type="text"
@@ -51,7 +51,7 @@ const LocationSearchPanel = (props) => {
           />
 
           <input className='bg-[#e8e7e7] py-2 px-14 rounded-lg w-full'
-            onFocus={() => { setActiveField('dropoff'); props.setPanelOpen(true) }}
+            onFocus={() => { setActiveField('dropoff') }}
             onClick={() => props.setPanelOpen(true)}
             value={props.dropOffLocation}
             onChange={(e) => { props.setDropOffLocation(e.target.value); fetchSuggestions(e.target.value) }}
@@ -73,19 +73,28 @@ const LocationSearchPanel = (props) => {
           {!isLoading && suggestions.map((sug) => (
             <div
               key={sug.place_id}
-              className='flex border-1 py-1 rounded-lg border-white active:border-gray-400 px-2 items-center gap-4 mb-2'
+              className="flex border-1 py-1 rounded-lg border-white active:border-gray-400 px-2 items-center gap-4 mb-2"
               onClick={() => {
-                if (activeField === 'pickup') {
-                  props.setPickupLocation(sug.description)
-                  setActiveField('dropoff')
-                  // keep panel open to allow selecting drop-off next
-                } else {
-                  props.setDropOffLocation(sug.description)
-                  // open vehicle panel only after drop-off is chosen and pickup exists
-                  if (props.pickupLocation && sug.description) {
-                    props.setVehiclePanelOpen(true)
+                if (activeField === "pickup") {
+                  props.setPickupLocation(sug.description);
+                  if (props.dropOffLocation) {
+                    // Both are now selected → open vehicle panel & close this panel
+                    props.setVehiclePanelOpen(true);
+                    props.setPanelOpen(false);
+                  } else {
+                    // Pickup selected first → now ask for drop-off
+                    setActiveField("dropoff");
                   }
-                  props.setPanelOpen(false)
+                } else {
+                  props.setDropOffLocation(sug.description);
+                  if (props.pickupLocation) {
+                    // Both are now selected → open vehicle panel & close this panel
+                    props.setVehiclePanelOpen(true);
+                    props.setPanelOpen(false);
+                  } else {
+                    // Drop-off selected first → now ask for pickup
+                    setActiveField("pickup");
+                  }
                 }
               }}
             >

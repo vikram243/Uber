@@ -2,6 +2,7 @@ import rideService from '../services/ride.service.js';
 import { validationResult } from 'express-validator';
 import mapsService from '../services/maps.service.js';
 import Ride from '../models/ride.model.js';
+import socket from '../socket.js';
 
 // Helper function to calculate fare based on distance, duration, and vehicle type
 async function getFare(destination, pickup, vehicleType) {
@@ -17,14 +18,22 @@ async function getFare(destination, pickup, vehicleType) {
   } catch (err) {
     throw new Error('FARE_UNAVAILABLE');
   }
-  if (!distanceTime || !distanceTime.distance || !distanceTime.duration) {
+  if (!distanceTime) {
     throw new Error('FARE_UNAVAILABLE');
   }
-  const duration = parseFloat(String(distanceTime.duration).replace(/[^0-9.]/g, ''));
-  const distance = parseFloat(String(distanceTime.distance).replace(/[^0-9.]/g, ''));
+
+  // Prefer numeric values returned from maps service
+  const distance = typeof distanceTime.distanceKm === 'number'
+    ? distanceTime.distanceKm
+    : parseFloat(String(distanceTime.distance || '').replace(/[^0-9.]/g, ''));
+  const duration = typeof distanceTime.durationMin === 'number'
+    ? distanceTime.durationMin
+    : parseFloat(String(distanceTime.duration || '').replace(/[^0-9.]/g, ''));
+
   if (!isFinite(distance) || !isFinite(duration)) {
     throw new Error('FARE_UNAVAILABLE');
   }
+
   // Guardrail for absurdly long routes (in km)
   if (distance > 5000) {
     throw new Error('ROUTE_TOO_LONG');
@@ -43,7 +52,11 @@ async function getFare(destination, pickup, vehicleType) {
     default:
       throw new Error('INVALID_VEHICLE');
   }
-  return Number(fare.toFixed(2));
+  return {
+    fare: Number(fare.toFixed(2)),
+    distanceKm: Number(distance.toFixed(1)),
+    durationMin: Number(duration.toFixed(1))
+  };
 }
 
 // Create a new ride
@@ -61,17 +74,21 @@ const createRide = async (req, res) => {
     if (!['car', 'bike', 'auto'].includes(normalizedType)) {
       return res.status(400).json({ error: 'Invalid vehicle type provided' });
     }
-    const fare = await getFare(destination, pickup, normalizedType);
+
+    const fareResult = await getFare(destination, pickup, normalizedType);
     const newRide = await rideService.createRide({
       pickup,
       destination,
       userId: req.user._id,
       vehicleType: normalizedType,
-      fare,
+      fare: fareResult.fare,
+      distanceKm: fareResult.distanceKm,
+      durationMin: fareResult.durationMin,
     });
+    res.status(201).json(newRide);
+
     const pickupCoordinates = await mapsService.getCoordinates(pickup);
-    
-    const radius = 15; // Temporary 15km radius for testing
+    const radius = 3; // Temporary 15km radius for testing
     const captainInRadius = await mapsService.getCaptainInTheRadius(
       pickupCoordinates.lat,
       pickupCoordinates.lng,
@@ -79,8 +96,14 @@ const createRide = async (req, res) => {
       normalizedType,
       false // Only active captains
     );
-    
-    res.status(201).json(newRide);
+
+    const data = await Ride.findById(newRide._id).populate('userId').select('-otp');
+    captainInRadius.forEach((captain) => {
+      if (captain.socketId) {
+        socket.sendMessageToSocketId(captain.socketId, 'new-ride', data);
+      }
+    });
+
   } catch (error) {
     console.error('Error creating ride:', error);
     if (error?.message === 'ROUTE_TOO_LONG') {
@@ -90,26 +113,6 @@ const createRide = async (req, res) => {
       return res.status(400).json({ error: 'Unable to calculate fare for the selected route.' });
     }
     res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-// Get ride details by ID
-const getRide = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const ride = await Ride.findById(id).populate({
-      path: 'captainId',
-      select: 'fullname vehicle status',
-    });
-    if (!ride) return res.status(404).json({ error: 'Ride not found' });
-    const response = { ...ride.toObject() };
-    if (ride.captainId) {
-      response.captain = ride.captainId;
-    }
-    return res.status(200).json(response);
-  } catch (error) {
-    console.error('Error fetching ride:', error);
-    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -134,27 +137,126 @@ const cancelRide = async (req, res) => {
   }
 };
 
-// Accept a ride by captain
-const acceptRide = async (req, res) => {
+// Confirm ride by captain
+const confirmRideByCaptain = async (req, res) => {
   try {
-    const { id } = req.params;
-    const ride = await Ride.findById(id);
-    if (!ride) return res.status(404).json({ error: 'Ride not found' });
-    if (ride.status !== 'pending') {
-      return res.status(400).json({ error: 'Ride is not pending' });
+    const { rideId, captainId } = req.body;
+    if (!rideId || !captainId) {
+      return res.status(400).json({ error: 'rideId and captainId are required' });
     }
-    ride.captainId = req.captain._id;
+
+    const ride = await Ride.findById(rideId);
+    if (!ride) {
+      return res.status(404).json({ error: 'Ride not found' });
+    }
+    if (ride.status == 'accepted' || ride.status == 'ongoing' || ride.status == 'completed' || ride.status == 'cancelled') {
+      return res.status(400).json({ error: 'Only panding Ride is able for confirmation' });
+    }
+
+    // Update ride
+    ride.captainId = captainId;
     ride.status = 'accepted';
     await ride.save();
-    const populated = await Ride.findById(id).populate({
-      path: 'captainId',
-      select: 'fullname vehicle status',
-    });
-    return res.status(200).json({ ride: populated, captain: populated.captainId });
+
+    // Populate data
+    const populatedRide = await Ride.findById(rideId).select('+otp')
+      .populate('userId')
+      .populate('captainId');
+
+    // User ko OTP ke sath data send
+    if (populatedRide.userId.socketId) {
+      socket.sendMessageToSocketId(
+        populatedRide.userId.socketId,
+        'ride-confirmed',
+        populatedRide
+      );
+    }
+
+    // Captain ke response se OTP hata k data send
+    const { otp, ...captainSafeRide } = populatedRide.toObject();
+
+    // Captain ko response (without OTP)
+    return res.status(200).json({ success: true, ride: captainSafeRide });
+
   } catch (error) {
-    console.error('Error accepting ride:', error);
+    console.error('Error confirming ride:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-export default { createRide, getRide, cancelRide, acceptRide };
+// Start ride by captain
+const startRideByCaptain = async (req, res) => {
+  try {
+    const { rideId, captainId, otp } = req.body || req.query;
+    const validOtp = Number(otp);
+    if (!rideId || !captainId || !otp) {
+      return res.status(400).json({ error: 'rideId, Otp and captainId are required' });
+    }
+
+    const ride = await Ride.findById(rideId).select('+otp').populate('userId').populate('captainId');
+    if (!ride) {
+      return res.status(404).json({ error: 'Ride not found' });
+    }
+    if (String(ride.captainId._id) !== String(captainId)) {
+      return res.status(403).json({ error: 'Not allowed to start this ride' });
+    }
+
+    if (ride.status == 'accepted') {
+      if (ride.otp !== validOtp) {
+        return res.status(400).json({ error: 'Invalid OTP' });
+      }
+      ride.status = 'ongoing';
+      await ride.save();
+
+      // Notify user that ride has started
+      if (ride.userId.socketId) {
+        socket.sendMessageToSocketId(ride.userId.socketId, 'ride-started', ride);
+      }
+
+      return res.status(200).json({ success: true });
+    }
+    else {
+      return res.status(400).json({ error: 'Only accepted rides can be started' });
+    }
+  } catch (error) {
+    console.error('Error starting ride:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Complete ride by captain
+const completeRide = async (req, res) => {
+  try {
+    const { rideId, captainId } = req.body;
+    if (!rideId || !captainId) {
+      return res.status(400).json({ error: 'rideId and captainId are required' });
+    }
+
+    const ride = await Ride.findById(rideId).populate('userId');
+    if (!ride) {
+      return res.status(404).json({ error: 'Ride not found' });
+    }
+    if (String(ride.captainId) !== String(captainId)) {
+      return res.status(403).json({ error: 'Not allowed to complete this ride' });
+    }
+    if (ride.status == 'ongoing') {
+      ride.status = 'completed';
+      await ride.save();
+
+      // Notify user that ride has been completed
+      if (ride.userId.socketId) {
+        socket.sendMessageToSocketId(ride.userId.socketId, 'ride-completed', null);
+      }
+
+      return res.status(200).json({ success: true });
+    }
+    else {
+      return res.status(400).json({ error: 'Only ongoing rides can be completed' });
+    }
+
+  } catch (error) {
+    console.error('Error completing ride:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+export default { createRide, cancelRide, confirmRideByCaptain, startRideByCaptain, completeRide };

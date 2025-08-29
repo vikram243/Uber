@@ -32,9 +32,18 @@ const getDistanceTime = async (origin, destination) => {
         if (response.data.status === "OK") {
             const element = response.data.rows[0].elements[0];
             if (element.status === "OK") {
+                // element.distance.value is in meters, element.duration.value is in seconds
+                const distanceMeters = element.distance.value;
+                const durationSeconds = element.duration.value;
+                const distanceKm = Number((distanceMeters / 1000).toFixed(3));
+                const durationMin = Number((durationSeconds / 60).toFixed(2));
                 return {
                     distance: element.distance.text,
                     duration: element.duration.text,
+                    distanceMeters,
+                    durationSeconds,
+                    distanceKm,
+                    durationMin,
                 };
             } else {
                 throw new Error(`Distance matrix failed: ${element.status}`);

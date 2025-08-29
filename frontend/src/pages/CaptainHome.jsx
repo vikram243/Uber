@@ -7,28 +7,27 @@ import { gsap } from 'gsap/dist/gsap';
 import CofirmUpcomingRidePopup from '../components/CofirmUpcomingRidePopup';
 import { SocketContext } from '../context/SocketContext';
 import { CaptainDataContext } from '../context/CaptainDataContext';
+import api from '../lib/api';
 
 const CaptainHome = () => {
   const [UpcomingRidePanel, setUpcomingRidePanel] = useState(false);
   const [CofirmUpcomingRidePanel, setCofirmUpcomingRidePanel] = useState(false);
   const UpcomingRidePanelRef = useRef(null);
   const CofirmUpcomingRidePanelRef = useRef(null);
-  const { sendMessage, connected } = React.useContext(SocketContext);
+  const { sendMessage, connected, socket } = React.useContext(SocketContext);
   const { captain } = React.useContext(CaptainDataContext);
   const hasJoined = useRef(false);
+  const [ride, setRide] = useState(null)
 
   useEffect(() => {
-    const id = localStorage.getItem("_CaptainId")
+    const id = captain?._id || localStorage.getItem('_CaptainId')
     if (!id) {
-      console.warn('CaptainHome: No captain ID available');
       return;
     }
     if (!connected) {
-      console.warn('CaptainHome: Socket not connected');
       return;
     }
     if (hasJoined.current) {
-      console.warn('CaptainHome: Join already sent');
       return;
     }
     sendMessage('join', { userId: id, role: 'captain' });
@@ -58,6 +57,20 @@ const CaptainHome = () => {
     };
   }, [sendMessage, captain, connected]);
 
+  useEffect(() => {
+    if (!socket) return; 
+
+    const handleNewRide = (ride) => {
+      setUpcomingRidePanel(true);
+      setRide(ride)
+    };
+    socket.on('new-ride', handleNewRide);
+
+    return () => {
+      socket.off('new-ride', handleNewRide); 
+    };
+  }, [socket]);
+
   useGSAP(() => {
     if (!UpcomingRidePanelRef.current) return;
     gsap.to(UpcomingRidePanelRef.current, {
@@ -77,6 +90,24 @@ const CaptainHome = () => {
       zIndex: CofirmUpcomingRidePanel ? 4 : 2,
     });
   }, [CofirmUpcomingRidePanel]);
+
+  const confirmRide = async () => {
+    const rideId = ride._id
+    const captainId = localStorage.getItem('_CaptainId')
+    if (!rideId || !captainId) {
+      console.error('Missing rideId or captainId');
+      return;
+    }
+    const response = await api.post('api/rides/confirm-ride', { rideId, captainId });
+    if (response.data.success) {
+      setUpcomingRidePanel(false);
+      setCofirmUpcomingRidePanel(true);
+      setRide(response.data.ride)
+    } else {
+      console.error('Error confirming ride:', response.data.message);
+      return;
+    }
+  };
 
   return (
     <div className='h-screen w-screen overflow-hidden relative'>
@@ -108,17 +139,20 @@ const CaptainHome = () => {
         />
       </div>
 
-      <CaptainDetails />
+      <CaptainDetails captain={captain}/>
 
       <UpcomingRidePopup
         ref={UpcomingRidePanelRef}
         setUpcomingRidePanel={setUpcomingRidePanel}
         setCofirmUpcomingRidePanel={setCofirmUpcomingRidePanel}
+        confirmRide={confirmRide}
+        ride={ride}
       />
 
       <CofirmUpcomingRidePopup
         ref={CofirmUpcomingRidePanelRef}
         setCofirmUpcomingRidePanel={setCofirmUpcomingRidePanel}
+        ride={ride}
       />
     </div>
   );

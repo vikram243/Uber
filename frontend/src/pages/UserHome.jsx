@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import 'remixicon/fonts/remixicon.css';
 import LocationSearchPanel from '../components/LocationSearchPanel';
 import VehiclePanel from '../components/VehiclePanel';
@@ -10,6 +10,7 @@ import WaitingForDriver from '../components/WaitingForDriver';
 import api from '../lib/api';
 import { SocketContext } from '../context/SocketContext';
 import { UserDataContext } from '../context/UserDataContext';
+
 
 const UserHome = () => {
   const [pickupLocation, setPickupLocation] = useState('');
@@ -20,22 +21,21 @@ const UserHome = () => {
   const [selectedVehicleImage, setSelectedVehicleImage] = useState(null);
   const [ride, setRide] = useState(null);
   const [WaitingForDriverPannel, setWaitingForDriverPannel] = useState(false);
-  const { sendMessage, connected } = React.useContext(SocketContext);
+  const { sendMessage, connected, socket } = React.useContext(SocketContext);
   const { userData } = React.useContext(UserDataContext);
   const hasJoined = useRef(false);
+  const navigate = useNavigate();
+  
 
   useEffect(() => {
-    const id = localStorage.getItem('_UserId')
+    const id = userData?._id || localStorage.getItem('_UserId')
     if (!id) {
-      console.warn('UserHome: No user ID available');
       return;
     }
     if (!connected) {
-      console.warn('UserHome: Socket not connected');
       return;
     }
     if (hasJoined.current) {
-      console.warn('UserHome: Join already sent');
       return;
     }
     sendMessage('join', { userId: id, role: 'user' });
@@ -49,8 +49,6 @@ const UserHome = () => {
   const VehiclePanelRef = useRef(null);
   const VehicleFoundPanelRef = useRef(null);
   const WaitingForDriverPannelRef = useRef(null);
-
-  const navigate = useNavigate();
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -101,28 +99,41 @@ const UserHome = () => {
   }, [WaitingForDriverPannel]);
 
   useEffect(() => {
-    if (!ride?._id || !WaitingForDriverPannel) return;
-    let cancelled = false;
-    const interval = setInterval(async () => {
-      try {
-        const { data } = await api.get(`/api/rides/${ride._id}`);
-        if (!cancelled) {
-          setRide(data);
-          if (data.status === 'in_progress') {
-            clearInterval(interval);
-            navigate('/riding');
-          }
-        }
-      } catch (err) {
-        console.error('Polling ride failed', err);
+    if (!socket) return; 
+
+    const handleConfirmRide = (ride) => {
+      if (!ride) {
+        console.warn('Received invalid ride confirmation data');
+        return;
       }
-    }, 4000);
+      setVehicleFound(false);
+      setWaitingForDriverPannel(true);
+      setRide(ride)
+    };
+    socket.on('ride-confirmed', handleConfirmRide);
 
     return () => {
-      cancelled = true;
-      clearInterval(interval);
+      socket.off('ride-confirmed', handleConfirmRide); 
     };
-  }, [ride?._id, WaitingForDriverPannel, navigate]);
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket) return; 
+
+    const handleStartRide = (ride) => {
+      if (!ride) {
+        console.warn('Received invalid ride confirmation data');
+        return;
+      }
+      setWaitingForDriverPannel(false);
+      navigate('/riding', { state: { ride } });
+    };
+    socket.on('ride-started', handleStartRide);
+
+    return () => {
+      socket.off('ride-started', handleStartRide); 
+    };
+  }, [socket]);
 
   return (
     <div className='relative h-screen w-screen overflow-hidden'>
@@ -186,11 +197,6 @@ const UserHome = () => {
           } catch (err) {
             console.error('Failed to cancel ride', err);
           }
-        }}
-        onAccepted={(updatedRide) => {
-          setRide(updatedRide);
-          setVehicleFound(false);
-          setWaitingForDriverPannel(true);
         }}
       />
 

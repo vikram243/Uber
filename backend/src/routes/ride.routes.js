@@ -1,7 +1,7 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
 import express from 'express';
 const router = express.Router();
-import { body } from 'express-validator';
+import { body, query } from 'express-validator';
 import rideController from '../controllers/ride.controller.js';
 import authMiddleware from '../middleware/middleware.js';
 
@@ -15,16 +15,24 @@ router.post('/create',
     asyncHandler(rideController.createRide)
 )
 
-// Get a ride by ID
-// It retrieves the ride details for the authenticated user
-router.get('/:id', authMiddleware.authUser, asyncHandler(rideController.getRide))
-
 // Get all rides for the authenticated user
 // It retrieves all rides associated with the authenticated user
 router.post('/:id/cancel', authMiddleware.authUser, asyncHandler(rideController.cancelRide))
 
-// Accept a ride by captain
-// It checks if the ride exists, verifies the captain's eligibility, and updates the ride status
-router.post('/:id/accept', authMiddleware.authCaptain, asyncHandler(rideController.acceptRide))
+// Confirm ride by captain
+router.post('/confirm-ride', authMiddleware.authCaptain, asyncHandler(rideController.confirmRideByCaptain))
+
+// Start ride by captain
+router.post('/start-ride', 
+    authMiddleware.authCaptain, 
+    query('rideId').notEmpty().withMessage('Ride ID is required'),
+    query('captainId').notEmpty().withMessage('Captain ID is required'),
+    query('otp').notEmpty().withMessage('OTP is required'),
+    asyncHandler(rideController.startRideByCaptain),
+)
+
+// Complete ride by captain
+// It marks a ride as completed by the captain
+router.post('/complete-ride', authMiddleware.authCaptain, asyncHandler(rideController.completeRide))
 
 export default router;

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const CaptainDetails = () => {
+const CaptainDetails = (props) => {
   return (
     <div className='bg-white w-full overflow-hidden p-4 flex flex-col'>
       <div className='flex items-center gap-8 justify-around'>
@@ -11,8 +11,8 @@ const CaptainDetails = () => {
         />
 
         <div className='text-right'>
-          <h2 className='text-lg font-medium text-blue-500 capitalize'>{"Vivek Kusbaha"}</h2>
-          <h4 className='text-xm font-mono -mt-1 -mb-1'>{"₹ 295.36"}</h4>
+          <h2 className='text-lg font-medium text-blue-500 capitalize'>{props.captain?.fullname?.firstname + ' ' + props.captain?.fullname?.lastname || "Captain Name"}</h2>
+          <h4 className='text-xm font-mono -mt-1 -mb-1'>₹{"295.36"}</h4>
           <p className='text-xs font-mono text-gray-600'>{"Earned"}</p>
         </div>
       </div>

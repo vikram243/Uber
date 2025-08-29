@@ -28,7 +28,7 @@ const CaptainProtectedWrapper = ({
           }
         })
         if (response.status === 200) {
-          setCaptain(response.data)
+          setCaptain(response.data.captain)
           localStorage.setItem('_CaptainId', response.data.captain._id)
         } else {
           localStorage.removeItem('token')

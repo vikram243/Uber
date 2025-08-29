@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 
 const RideDetailsCaptainRiding = React.forwardRef((props, ref) => {
+  const { ride } = props;
   return (
     <div
       ref={ref}
@@ -9,8 +10,8 @@ const RideDetailsCaptainRiding = React.forwardRef((props, ref) => {
       <div className='flex flex-col'>
         <h2 className='text-lg font-medium capitalize'>{"Ride Details:"}</h2>
         <div className='flex items-center justify-between mt-2'>
-          <h4 className='text-sm font-semibold -mt-1 -mb-1'>{"Anupma Rajput"}</h4>
-          <p className='text-sm font-mono text-blue-600'>{"5 Km"}</p>
+          <h4 className='text-sm font-semibold -mt-1 -mb-1 capitalize'>{ride?.userId?.fullname?.firstname + ' ' + ride?.userId?.fullname?.lastname || "Costumer Name"}</h4>
+          <p className='text-sm font-mono text-blue-600'>{ride?.distance} Km</p>
         </div>
       </div>
 
@@ -20,7 +21,7 @@ const RideDetailsCaptainRiding = React.forwardRef((props, ref) => {
             <i className="ri-map-pin-user-fill"></i>
             <div>
               <h3 className='text-lg font-medium'>Pickup</h3>
-              <p className='text-sm -mt-1 text-gray-600'>{'Kailash nagar semra kalan'}</p>
+              <p className='text-sm -mt-1 text-gray-600'>{ride?.pickup}</p>
             </div>
           </div>
 
@@ -28,14 +29,14 @@ const RideDetailsCaptainRiding = React.forwardRef((props, ref) => {
             <i className="text-lg ri-map-pin-2-fill"></i>
             <div>
               <h3 className='text-lg font-medium'>Drop-off</h3>
-              <p className='text-sm -mt-1 text-gray-600'>{'Bhopal Junction'}</p>
+              <p className='text-sm -mt-1 text-gray-600'>{ride?.destination}</p>
             </div>
           </div>
 
           <div className='flex items-center gap-5 p-3'>
             <i className="ri-currency-line"></i>
             <div>
-              <h3 className='text-lg font-medium'>₹{'205'}</h3>
+              <h3 className='text-lg font-medium'>₹{ride?.fare}</h3>
               <p className='text-sm text-gray-600'>Cash</p>
             </div>
           </div>
@@ -46,12 +47,6 @@ const RideDetailsCaptainRiding = React.forwardRef((props, ref) => {
           className='w-full bg-green-500 mb-2 text-white font-medium p-2 rounded-lg'>
           {"Start Ride"}
         </button>
-        
-        <Link
-          to='/captain/home'
-          className='w-full bg-red-500 mb-2 text-center text-white font-medium p-2 rounded-lg'>
-          {"Cancel Ride"}
-        </Link>
       </div>
     </div>
   )

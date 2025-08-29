@@ -4,6 +4,8 @@ import { useGSAP } from '@gsap/react/dist';
 import { gsap } from 'gsap/dist/gsap';
 import RideDetailsCaptainRiding from '../components/RideDetailsCaptainRiding';
 import CompleteRide from '../components/CompleteRide';
+import { useLocation } from 'react-router-dom';
+import { CaptainDataContext } from '../context/CaptainDataContext';
 
 const CaptainRiding = () => {
   const [otpPanel, setOtpPanel] = useState(false);
@@ -12,6 +14,8 @@ const CaptainRiding = () => {
   const otpPanelRef = useRef(null)
   const rideDetailsPanelRef = useRef(null)
   const completeRideRef = useRef(null)
+  const location = useLocation();
+  const ride = location.state?.ride;
 
   /* otpPanel Animation */
   useGSAP(() => {
@@ -74,6 +78,7 @@ const CaptainRiding = () => {
         ref={rideDetailsPanelRef}
         setOtpPanel={setOtpPanel}
         setRideDetailsPanel={setRideDetailsPanel}
+        ride={ride}
       />
 
       {/* Otp */}
@@ -82,12 +87,14 @@ const CaptainRiding = () => {
         setOtpPanel={setOtpPanel}
         setRideDetailsPanel={setRideDetailsPanel}
         setCompleteRide={setCompleteRide}
+        ride={ride}
       />
 
       {/* Complete Ride */}
       <CompleteRide
         ref={completeRideRef}
         setCompleteRide={setCompleteRide}
+        ride={ride}
       />
 
     </div>

@@ -8,9 +8,9 @@ const CofirmUpcomingRidePopup = React.forwardRef((props, ref) => {
         <img className='h-20 border-1 rounded-full border-gray-300 object-cover object-center' src={"https://png.pngtree.com/png-clipart/20230814/original/pngtree-cute-cartoon-girls-face-vector-png-image_10354397.png"} alt="Passanger" />
         <div className='text-right'>
           <h2 className='text-lg font-medium capitalize'>{"Confirm This Ride To Go!"}</h2>
-          <h4 className='text-sm font-semibold mt-1 capitalize'>{"Salini Gupta"}</h4>
-          <p className='text-sm font-mono text-blue-600 mt-1'>{"₹205"}</p>
-          <h1 className='text-sm font-mono text-gray-800 -mt-1'>{"5 km"}</h1>
+          <h4 className='text-sm font-semibold mt-1 capitalize'>{props.ride?.userId?.fullname?.firstname + ' ' + props.ride?.userId?.fullname?.lastname || "Costumer Name"}</h4>
+          <p className='text-sm font-mono text-blue-600 mt-1'>₹{props.ride?.fare || "fare"}</p>
+          <h1 className='text-sm font-mono text-gray-800 -mt-1'>{props.ride?.distance} Km</h1>
         </div>
       </div>
 
@@ -20,7 +20,7 @@ const CofirmUpcomingRidePopup = React.forwardRef((props, ref) => {
             <i className="ri-map-pin-user-fill"></i>
             <div>
               <h3 className='text-lg font-normal'>Pickup</h3>
-              <p className='text-sm -mt-1 text-gray-600'>{'Bhopal Railway Station'}</p>
+              <p className='text-sm -mt-1 text-gray-600'>{props.ride?.pickup}</p>
             </div>
           </div>
 
@@ -28,7 +28,7 @@ const CofirmUpcomingRidePopup = React.forwardRef((props, ref) => {
             <i className="text-lg ri-map-pin-2-fill"></i>
             <div>
               <h3 className='text-lg font-normal'>Drop-off</h3>
-              <p className='text-sm -mt-1 text-gray-600'>{'Kailash nagar semra kalan'}</p>
+              <p className='text-sm -mt-1 text-gray-600'>{props.ride?.destination}</p>
             </div>
           </div>
 
@@ -36,7 +36,7 @@ const CofirmUpcomingRidePopup = React.forwardRef((props, ref) => {
             <i className="ri-sticky-note-line"></i>
             <div>
               <h3 className='text-lg font-normal'>Note</h3>
-              <p className='text-sm -mt-1 text-gray-600'>{'Building ka guard ko call karna bhaiya'}</p>
+              <p className='text-sm -mt-1 text-gray-600'>{'Give note what you want'}</p>
             </div>
           </div>
         </div>
@@ -44,21 +44,29 @@ const CofirmUpcomingRidePopup = React.forwardRef((props, ref) => {
         <div className='w-full'>
           <div className='w-full flex flex-col border-gray-300 p-3'>
             <h3 className='text-lg font-normal mb-2'>Trip Fare Breakup</h3>
+
             <div className='flex justify-between'>
-              <p className='text-sm text-gray-600'>{'Phone Pay'}</p>
-              <p className='text-sm text-gray-600'>{'₹173'}</p>
+              <p className='text-sm text-gray-600'>Phone Pay</p>
+              <p className='text-sm text-gray-600'>
+                ₹{props.ride?.fare ? (props.ride.fare * 0.83).toFixed(2) : "0.00"}
+              </p>
             </div>
 
             <div className='flex justify-between'>
-              <p className='text-sm text-gray-600'>{'Extra Amount'}</p>
-              <p className='text-sm text-gray-600'>{'₹32'}</p>
+              <p className='text-sm text-gray-600'>Extra Amount</p>
+              <p className='text-sm text-gray-600'>
+                ₹{props.ride?.fare ? (props.ride.fare * 0.17).toFixed(2) : "0.00"}
+              </p>
             </div>
 
             <div className='flex justify-between'>
-              <p className='text-sm text-gray-600'>{'Total Payment'}</p>
-              <p className='text-sm text-gray-600'>{'₹205'}</p>
+              <p className='text-sm text-gray-600'>Total Payment</p>
+              <p className='text-sm text-gray-600'>
+                ₹{props.ride?.fare || "0.00"}
+              </p>
             </div>
           </div>
+
 
           <div className='w-full flex items-center justify-between'>
             <Link 
@@ -66,7 +74,9 @@ const CofirmUpcomingRidePopup = React.forwardRef((props, ref) => {
               className='bg-red-500 text-center text-white font-bold px-4 py-2 rounded-lg'><i className="ri-close-circle-line"></i>
             </Link>
             <Link 
-              to={"/captain/riding"} 
+              to={"/captain/riding"}
+              state={{ ride: props.ride }}
+              onClick={() => props.setCofirmUpcomingRidePanel(false)}
               className='w-full bg-yellow-500 text-center text-white font-medium p-2 rounded-lg ml-2'>Go to Pickup Location <i className="ri-map-pin-line"></i>
             </Link>
           </div>

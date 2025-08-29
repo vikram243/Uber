@@ -1,58 +1,29 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import api from '../lib/api'
+import React, { useMemo, useEffect } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { SocketContext } from '../context/SocketContext';
 
 const Riding = () => {
-  // 🔹 State to manage ride details and vehicle image
-  const navigate = useNavigate()
-
-  // 🔹 Retrieve ride details from localStorage or initialize to null
-  const [ride, setRide] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('ride')) } catch { return null }
-  })
   const vehicleImage = useMemo(() => localStorage.getItem('vehicleImage'), [])
+  const location = useLocation();
+  const ride = location.state?.ride;
+  const { socket } = React.useContext(SocketContext);
+  const navigate = useNavigate();
 
-  // 🔹 Fetch latest ride once on mount (fix OTP missing after refresh)
   useEffect(() => {
-    const fetchRide = async () => {
-      try {
-        if (ride?._id) {
-          const { data } = await api.get(`/rides/${ride._id}`)
-          setRide(data)
-          localStorage.setItem('ride', JSON.stringify(data))
-        }
-      } catch (err) {
-        console.error('Failed to fetch ride on mount', err)
-      }
-    }
-    fetchRide()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // run once when component mounts
-
-  // 🔹 Poll ride status every 5s
-  useEffect(() => {
-    if (!ride?._id) return
-    let cancelled = false
-    const interval = setInterval(async () => {
-      try {
-        const { data } = await api.get(`/rides/${ride._id}`)
-        if (!cancelled) {
-          setRide(data)
-          localStorage.setItem('ride', JSON.stringify(data))
-          if (data.status === 'completed') {
-            clearInterval(interval)
-            navigate('/user/home') // 👈 after ride ends, go back home
-          }
-        }
-      } catch (err) {
-        console.error('Failed to fetch ride updates', err)
-      }
-    }, 5000)
-    return () => { cancelled = true; clearInterval(interval) }
-  }, [ride?._id, navigate])
+    if (!socket) return; 
+  
+    const handleStartRide = () => {
+      navigate('/user/home');
+    };
+    socket.on('ride-completed', handleStartRide);
+  
+    return () => {
+      socket.off('ride-completed', handleStartRide); 
+    };
+  }, [socket]);
 
   return (
-    <div className='h-screen w-screen'>
+    <div className='h-screen w-screen relative overflow-hidden'>
       {/* Home Button */}
       <Link
         to='/user/home'
@@ -71,7 +42,7 @@ const Riding = () => {
       </div>
 
       {/* Ride Details */}
-      <div className='bg-white w-full h-1/3 p-4 rounded-t-lg z-2 flex flex-col absolute top-0 translate-y-full'>
+      <div className='absolute bottom-0 bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
         <div className='flex items-center justify-between'>
           <img
             className='h-20 object-cover object-center'
@@ -79,10 +50,10 @@ const Riding = () => {
             alt="Selected Vehicle"
           />
           <div className='text-right'>
-            <h2 className='text-sm font-medium capitalize'>{ride?.driver?.name || "Driver Assigned"}</h2>
-            <h4 className='text-lg font-semibold -mt-1 -mb-1'>{ride?.vehicleNumber || "—"}</h4>
-            <p className='text-xs text-gray-600'>{ride?.vehicleModel || "—"}</p>
-            <h1 className='text-lg font-mono text-blue-800 mt-1.5'>{ride?.otp || "—"}</h1>
+            <h2 className='text-sm font-medium capitalize'>{ride?.captainId?.fullname?.firstname + ' ' + ride?.captainId?.fullname?.lastname}</h2>
+            <h4 className='text-lg font-semibold -mt-1 -mb-1'>{ride?.captainId?.vehicle?.plate}</h4>
+            <p className='text-xs text-gray-600'>{ride?.captainId?.vehicle?.model}</p>
+            <p className='text-xs text-gray-600'>{ride?.distance} Km</p>
           </div>
         </div>
 
@@ -92,20 +63,20 @@ const Riding = () => {
               <i className="ri-map-pin-user-fill"></i>
               <div>
                 <h3 className='text-lg font-medium'>Pickup</h3>
-                <p className='text-sm -mt-1 text-gray-600'>{ride?.pickup || '-'}</p>
+                <p className='text-sm -mt-1 text-gray-600'>{ride?.pickup}</p>
               </div>
             </div>
             <div className='flex items-center gap-5 p-3 border-b-1'>
               <i className="text-lg ri-map-pin-2-fill"></i>
               <div>
                 <h3 className='text-lg font-medium'>Drop-off</h3>
-                <p className='text-sm -mt-1 text-gray-600'>{ride?.destination || '-'}</p>
+                <p className='text-sm -mt-1 text-gray-600'>{ride?.destination}</p>
               </div>
             </div>
             <div className='flex items-center gap-5 p-3'>
               <i className="ri-currency-line"></i>
               <div>
-                <h3 className='text-lg font-medium'>₹{ride?.fare ?? '—'}</h3>
+                <h3 className='text-lg font-medium'>₹{ride?.fare}</h3>
                 <p className='text-sm text-gray-600'>Cash</p>
               </div>
             </div>
@@ -116,9 +87,8 @@ const Riding = () => {
             className='w-full bg-green-500 mb-2 text-white font-medium p-2 rounded-lg'
             onClick={() => {
               alert("Payment flow not implemented yet 🚀")
-            }}
-          >
-            {ride?.status === 'completed' ? "Ride Completed" : "Make a Payment"}
+            }}>
+            {"Make a Payment"}
           </button>
         </div>
       </div>

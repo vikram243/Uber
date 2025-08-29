@@ -87,7 +87,7 @@ function initializeSocket(server) {
                         coordinates: [lng, lat], // [longitude, latitude]
                     },
                 });
-                console.log(`Updated captain ${userId} location to [${lng}, ${lat}]`);
+                // console.log(`Updated captain ${userId} location to [${lng}, ${lat}]`);
             } catch (error) {
                 console.error('Error updating captain location:', error);
                 socket.emit('error', { message: 'Failed to update location' });
@@ -106,10 +106,6 @@ function initializeSocket(server) {
             console.log('Socket disconnected:', socket.id, reason);
         });
 
-        socket.on('ping', (cb) => {
-            console.log('Received ping event');
-            if (typeof cb === 'function') cb('pong');
-        });
     });
 
     return io;

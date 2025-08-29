@@ -8,9 +8,9 @@ const UpcomingRidePopup = React.forwardRef((props, ref) => {
         <img className='h-20 border-1 rounded-full border-gray-300 object-cover object-center' src={"https://png.pngtree.com/png-clipart/20230814/original/pngtree-cute-cartoon-girls-face-vector-png-image_10354397.png"} alt="Passanger" />
         <div className='text-right'>
           <h2 className='text-lg font-medium capitalize'>{"Upcoming Ride!"}</h2>
-          <h4 className='text-sm font-semibold mt-1 capitalize'>{"Salini Gupta"}</h4>
-          <p className='text-sm font-mono text-blue-600 mt-1'>{"₹205"}</p>
-          <h1 className='text-sm font-mono text-gray-800 -mt-1'>{"5 km"}</h1>
+          <h4 className='text-sm font-semibold mt-1 capitalize'>{props.ride?.userId.fullname.firstname + ' ' + props.ride?.userId.fullname.lastname}</h4>
+          <p className='text-sm font-mono text-blue-600'>₹{props.ride?.fare}</p>
+          <h4 className='text-sm font-mono capitalize'>{props.ride?.distance} Km</h4>
         </div>
       </div>
 
@@ -20,7 +20,7 @@ const UpcomingRidePopup = React.forwardRef((props, ref) => {
             <i className="ri-map-pin-user-fill"></i>
             <div>
               <h3 className='text-lg font-normal'>Pickup</h3>
-              <p className='text-sm -mt-1 text-gray-600'>{'Bhopal Railway Station'}</p>
+              <p className='text-sm -mt-1 text-gray-600 capitalize'>{props.ride?.pickup}</p>
             </div>
           </div>
 
@@ -28,7 +28,7 @@ const UpcomingRidePopup = React.forwardRef((props, ref) => {
             <i className="text-lg ri-map-pin-2-fill"></i>
             <div>
               <h3 className='text-lg font-normal'>Drop-off</h3>
-              <p className='text-sm -mt-1 text-gray-600'>{'Kailash nagar semra kalan'}</p>
+              <p className='text-sm -mt-1 text-gray-600 capitalize'>{props.ride?.destination}</p>
             </div>
           </div>
         </div>
@@ -39,7 +39,7 @@ const UpcomingRidePopup = React.forwardRef((props, ref) => {
             className='w-full bg-gray-500 text-white font-medium p-2 rounded-lg'>Ignore
           </button>
           <button 
-            onClick={() => {props.setCofirmUpcomingRidePanel(true); props.setUpcomingRidePanel(false)}}
+            onClick={() => {props.confirmRide()}}
             className='w-full bg-green-500 text-white font-medium p-2 rounded-lg ml-2'>Accept
           </button>
         </div>

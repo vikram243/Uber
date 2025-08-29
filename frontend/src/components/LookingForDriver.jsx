@@ -1,27 +1,5 @@
-import React, { useEffect } from 'react'
-import api from '../lib/api'
-
 const LookingForDriver = (props) => {
   const ride = props.ride
-
-  // Poll ride status every 3 seconds to check if accepted
-  useEffect(() => {
-    if (!ride?._id) return
-    let cancelled = false
-    const interval = setInterval(async () => {
-      try {
-        const { data } = await api.get(`/api/rides/${ride._id}`)
-        if (!cancelled && data?.status === 'accepted') {
-          props.onAccepted && props.onAccepted(data)
-        }
-      }
-      catch {
-        // Handle error if needed
-      }
-    }, 3000)
-    return () => { cancelled = true; clearInterval(interval) }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ride?._id])
 
   return (
     <div ref={props.VehicleFoundPanelRef} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
@@ -39,7 +17,7 @@ const LookingForDriver = (props) => {
             <i className="ri-map-pin-user-fill"></i>
             <div>
               <h3 className='text-lg font-medium'>Pickup</h3>
-              <p className='text-sm -mt-1 text-gray-600'>{ride?.pickup || '-'}</p>
+              <p className='text-sm -mt-1 text-gray-600 capitalize'>{ride?.pickup || '-'}</p>
             </div>
           </div>
 
@@ -47,7 +25,7 @@ const LookingForDriver = (props) => {
             <i className="text-lg ri-map-pin-2-fill"></i>
             <div>
               <h3 className='text-lg font-medium'>Drop-off</h3>
-              <p className='text-sm -mt-1 text-gray-600'>{ride?.destination || '-'}</p>
+              <p className='text-sm -mt-1 text-gray-600 capitalize'>{ride?.destination || '-'}</p>
             </div>
           </div>
 
@@ -61,7 +39,8 @@ const LookingForDriver = (props) => {
         </div>
         
         <button className='w-full bg-red-500 text-white font-medium p-2 rounded-lg'
-          onClick={props.onCancel}>Cancel Ride</button>
+          onClick={props.onCancel}>Cancel Ride
+        </button>
       </div>
     </div>
   )

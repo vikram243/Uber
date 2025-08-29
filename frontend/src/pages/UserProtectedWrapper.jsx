@@ -30,7 +30,7 @@ const UserProtectedWrapper = ({
         })
         if (response.status === 200) {
           // backend returns { message, user } — store the user object
-          setUserData(response.data)
+          setUserData(response.data.user)
           localStorage.setItem('_UserId', response.data.user._id)
         } else {
           localStorage.removeItem('token')

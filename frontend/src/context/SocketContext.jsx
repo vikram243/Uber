@@ -36,9 +36,6 @@ const SocketProvider = ({ children }) => {
         console.error('Socket connect_error:', err.message || err);
       });
 
-      s.on('pong', () => {
-        console.log('Received pong from server');
-      });
     };
 
     setupListeners(socket);
@@ -50,7 +47,6 @@ const SocketProvider = ({ children }) => {
 
     return () => {
       if (socketRef.current) {
-        socketRef.current.disconnect();
         socketRef.current = null;
         console.log('SocketProvider: Disconnected');
       }
@@ -65,20 +61,8 @@ const SocketProvider = ({ children }) => {
     socketRef.current.emit(eventName, payload);
   }, [connected]);
 
-  const subscribe = useCallback((eventName, handler) => {
-    if (!socketRef.current) {
-      console.warn('Socket not initialized. Cannot subscribe', eventName);
-      return () => {};
-    }
-    socketRef.current.on(eventName, handler);
-    return () => {
-      if (socketRef.current) socketRef.current.off(eventName, handler);
-    };
-  }, []);
-
   const value = {
     sendMessage,
-    subscribe,
     connected,
     socket: socketRef.current,
   };
