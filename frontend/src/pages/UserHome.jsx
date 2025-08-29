@@ -121,6 +121,20 @@ const UserHome = () => {
   useEffect(() => {
     if (!socket) return; 
 
+    const handleCancelRide = () => {
+      setWaitingForDriverPannel(false);
+      setRide(null)
+    };
+    socket.on('ride-cancelled', handleCancelRide);
+
+    return () => {
+      socket.off('ride-cancelled', handleCancelRide); 
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket) return; 
+
     const handleStartRide = (ride) => {
       if (!ride) {
         console.warn('Received invalid ride confirmation data');

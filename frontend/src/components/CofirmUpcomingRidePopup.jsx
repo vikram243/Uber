@@ -1,10 +1,40 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { gsap } from 'gsap/dist/gsap';
+import { useState } from 'react';
 
 const CofirmUpcomingRidePopup = React.forwardRef((props, ref) => {
+  const [isUp, setIsUp] = useState(false); // track panel position
+
+  // Function to toggle position
+  const togglePanel = () => {
+    if (!ref.current) return;
+    if (!isUp) {
+      gsap.to(ref.current, {
+        bottom: "-55%", // move down
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    } else {
+      gsap.to(ref.current, {
+        bottom: "0%", // move back
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    }
+    setIsUp(!isUp); // toggle state
+  };
+
   return (
     <div ref={ref} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
-      <div className='flex p-2 items-center gap-8 justify-around bg-gray-200 rounded'>
+
+      {/* Toggle Button */}
+      <i
+        onClick={togglePanel}
+        className="absolute top-0 left-1/2 -translate-x-1/2 text-xl ri-git-commit-line cursor-pointer"
+      ></i>
+
+      <div className='flex p-2 items-center gap-8 justify-around bg-gray-200 rounded mt-2'>
         <img className='h-20 border-1 rounded-full border-gray-300 object-cover object-center' src={"https://png.pngtree.com/png-clipart/20230814/original/pngtree-cute-cartoon-girls-face-vector-png-image_10354397.png"} alt="Passanger" />
         <div className='text-right'>
           <h2 className='text-lg font-medium capitalize'>{"Confirm This Ride To Go!"}</h2>
@@ -70,7 +100,7 @@ const CofirmUpcomingRidePopup = React.forwardRef((props, ref) => {
 
           <div className='w-full flex items-center justify-between'>
             <Link 
-              onClick={() => props.setCofirmUpcomingRidePanel(false)}
+              onClick={() => props.cancelRide()}
               className='bg-red-500 text-center text-white font-bold px-4 py-2 rounded-lg'><i className="ri-close-circle-line"></i>
             </Link>
             <Link 

@@ -1,13 +1,43 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
+import { gsap } from 'gsap/dist/gsap';
+import { useState } from 'react';
 
 const RideDetailsCaptainRiding = React.forwardRef((props, ref) => {
   const { ride } = props;
+  const [isUp, setIsUp] = useState(false); // track panel position
+
+  // Function to toggle position
+  const togglePanel = () => {
+    if (!ref.current) return;
+    if (!isUp) {
+      gsap.to(ref.current, {
+        bottom: "-48%", // move down
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    } else {
+      gsap.to(ref.current, {
+        bottom: "0%", // move back
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    }
+    setIsUp(!isUp); // toggle state
+  };
+
   return (
     <div
       ref={ref}
       className='bg-white w-full translate-y-full p-4 rounded-t-lg z-2 flex flex-col absolute bottom-0'>
-      <div className='flex flex-col'>
+
+      {/* Toggle Button */}
+      <i
+        onClick={togglePanel}
+        className="absolute top-0 left-1/2 -translate-x-1/2 text-xl ri-git-commit-line cursor-pointer"
+      ></i>
+
+      <div className='flex flex-col mt-2'>
         <h2 className='text-lg font-medium capitalize'>{"Ride Details:"}</h2>
         <div className='flex items-center justify-between mt-2'>
           <h4 className='text-sm font-semibold -mt-1 -mb-1 capitalize'>{ride?.userId?.fullname?.firstname + ' ' + ride?.userId?.fullname?.lastname || "Costumer Name"}</h4>

@@ -108,7 +108,7 @@ const getCaptainInTheRadius = async (lat, lng, radius, vehicleType) => {
             })
             .select("fullname vehicle location socketId status");
 
-        console.log(`Found ${captains.length} captains:`, captains);
+        console.log(`Found ${captains.length} captains in radius`);
         return captains;
     } catch (error) {
         console.error("Error fetching captains in radius:", error);

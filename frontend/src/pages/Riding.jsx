@@ -2,6 +2,8 @@ import React, { useMemo, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { SocketContext } from '../context/SocketContext';
 import LiveTracking from '../components/LiveTracking';
+import { gsap } from 'gsap/dist/gsap';
+import { useState } from 'react';
 
 const Riding = () => {
   const vehicleImage = useMemo(() => localStorage.getItem('vehicleImage'), [])
@@ -9,6 +11,27 @@ const Riding = () => {
   const ride = location.state?.ride;
   const { socket } = React.useContext(SocketContext);
   const navigate = useNavigate();
+  const [isUp, setIsUp] = useState(false); // track panel positionc
+  const ridingRef = React.useRef(null);
+
+  // Function to toggle position
+  const togglePanel = () => {
+    if (!ridingRef.current) return;
+    if (!isUp) {
+      gsap.to(ridingRef.current, {
+        bottom: "-49%", // move down
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    } else {
+      gsap.to(ridingRef.current, {
+        bottom: "0%", // move back
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    }
+    setIsUp(!isUp); // toggle state
+  };
 
   useEffect(() => {
     if (!socket) return; 
@@ -47,7 +70,14 @@ const Riding = () => {
       </div>
 
       {/* Ride Details */}
-      <div className='absolute bottom-0 bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
+      <div ref={ridingRef} className='absolute bottom-0 bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
+       
+        {/* Toggle Button */}
+        <i
+          onClick={togglePanel}
+          className="absolute top-0 left-1/2 -translate-x-1/2 text-xl ri-git-commit-line cursor-pointer"
+        ></i>
+
         <div className='flex items-center justify-between'>
           <img
             className='h-20 object-cover object-center'
@@ -62,8 +92,8 @@ const Riding = () => {
           </div>
         </div>
 
-        <div className='flex gap-2 justify-between flex-col items-center'>
-          <div className='w-full mt-3'>
+        <div className='flex gap-2 justify-between flex-col items-center mt-5'>
+          <div className='w-full'>
             <div className='flex items-center gap-5 p-3 border-b-1'>
               <i className="ri-map-pin-user-fill"></i>
               <div>

@@ -184,6 +184,42 @@ const confirmRideByCaptain = async (req, res) => {
   }
 };
 
+// Cancel ride by captain
+const cancelRideByCaptain = async (req, res) => {
+  try {
+    const { rideId, captainId } = req.body;
+    if (!rideId || !captainId) {
+      return res.status(400).json({ error: 'rideId and captainId are required' });
+    }
+
+    const ride = await Ride.findById(rideId).populate('userId');
+    if (!ride) {
+      return res.status(404).json({ error: 'Ride not found' });
+    }
+    if (String(ride.captainId) !== String(captainId)) {
+      return res.status(403).json({ error: 'Not allowed to cancel this ride' });
+    }
+    if (ride.status == 'accepted' || ride.status == 'ongoing') {
+      ride.status = 'cancelled';
+      await ride.save();
+
+      // Notify user that ride has been cancelled
+      if (ride.userId.socketId) {
+        socket.sendMessageToSocketId(ride.userId.socketId, 'ride-cancelled', null);
+      }
+
+      return res.status(200).json({ success: true });
+    }
+    else {
+      return res.status(400).json({ error: 'Only accepted or ongoing rides can be cancelled' });
+    }
+
+  } catch (error) {
+    console.error('Error cancelling ride:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 // Start ride by captain
 const startRideByCaptain = async (req, res) => {
   try {
@@ -259,4 +295,5 @@ const completeRide = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
-export default { createRide, cancelRide, confirmRideByCaptain, startRideByCaptain, completeRide };
+
+export default { createRide, cancelRide, confirmRideByCaptain, startRideByCaptain, completeRide, cancelRideByCaptain };

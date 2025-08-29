@@ -1,11 +1,40 @@
-import React from 'react'
+import { gsap } from 'gsap/dist/gsap';
+import { useState } from 'react';
 
 const WaitingForDriver = (props) => {
   const ride = props.ride
+  const [isUp, setIsUp] = useState(false); // track panel positionc
+
+  // Function to toggle position
+  const togglePanel = () => {
+    if (!props.WaitingForDriverPannelRef.current) return;
+    if (!isUp) {
+      gsap.to(props.WaitingForDriverPannelRef.current, {
+        bottom: "-43%", // move down
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    } else {
+      gsap.to(props.WaitingForDriverPannelRef.current, {
+        bottom: "0%", // move back
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    }
+    setIsUp(!isUp); // toggle state
+  };
+
   return (
     <div 
       ref={props.WaitingForDriverPannelRef} 
       className="absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-1 flex flex-col gap-4">
+      
+      {/* Toggle Button */}
+      <i
+        onClick={togglePanel}
+        className="absolute top-0 left-1/2 -translate-x-1/2 text-xl ri-git-commit-line cursor-pointer"
+      ></i> 
+
       <div className="flex items-center justify-between">
         <img 
           className="h-20 object-cover object-center" 
@@ -23,8 +52,8 @@ const WaitingForDriver = (props) => {
         </div>
       </div>
 
-      <div className="flex gap-2 justify-between flex-col items-center">
-        <div className="w-full mt-3">
+      <div className="flex gap-2 justify-between flex-col items-center mt-5">
+        <div className="w-full">
           <div className="flex items-center gap-5 p-3 border-b-1 border-gray-300">
             <i className="ri-map-pin-user-fill"></i>
             <div>

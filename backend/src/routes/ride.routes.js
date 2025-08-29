@@ -35,4 +35,7 @@ router.post('/start-ride',
 // It marks a ride as completed by the captain
 router.post('/complete-ride', authMiddleware.authCaptain, asyncHandler(rideController.completeRide))
 
+// Cancel ride by captain
+router.post('/cancel-ride', authMiddleware.authCaptain, asyncHandler(rideController.cancelRideByCaptain))
+
 export default router;

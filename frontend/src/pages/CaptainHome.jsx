@@ -110,6 +110,23 @@ const CaptainHome = () => {
     }
   };
 
+  const cancelRide = async () => {
+    const rideId = ride._id
+    const captainId = localStorage.getItem('_CaptainId')
+    if (!rideId || !captainId) {
+      console.error('Missing rideId or captainId');
+      return;
+    }
+    const response = await api.post('api/rides/cancel-ride', { rideId, captainId });
+    if (response.data.success) {
+      setCofirmUpcomingRidePanel(false);
+      setRide(null)
+    } else {
+      console.error('Error canceling ride:', response.data.message);
+      return;
+    }
+  };
+
   return (
     <div className='h-screen w-screen overflow-hidden relative'>
       <div className='flex absolute items-center z-1'>
@@ -152,6 +169,7 @@ const CaptainHome = () => {
         ref={CofirmUpcomingRidePanelRef}
         setCofirmUpcomingRidePanel={setCofirmUpcomingRidePanel}
         ride={ride}
+        cancelRide={cancelRide}
       />
     </div>
   );
