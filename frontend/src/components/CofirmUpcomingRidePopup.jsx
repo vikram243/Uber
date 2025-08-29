@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 const CofirmUpcomingRidePopup = React.forwardRef((props, ref) => {
   return (
-    <div ref={ref} className='h-screen absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
+    <div ref={ref} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
       <div className='flex p-2 items-center gap-8 justify-around bg-gray-200 rounded'>
         <img className='h-20 border-1 rounded-full border-gray-300 object-cover object-center' src={"https://png.pngtree.com/png-clipart/20230814/original/pngtree-cute-cartoon-girls-face-vector-png-image_10354397.png"} alt="Passanger" />
         <div className='text-right'>

@@ -10,6 +10,7 @@ import WaitingForDriver from '../components/WaitingForDriver';
 import api from '../lib/api';
 import { SocketContext } from '../context/SocketContext';
 import { UserDataContext } from '../context/UserDataContext';
+import LiveTracking from '../components/LiveTracking';
 
 
 const UserHome = () => {
@@ -74,7 +75,7 @@ const UserHome = () => {
 
   useGSAP(() => {
     gsap.to(panelRef.current, {
-      height: panelOpen ? '70%' : '0%',
+      height: panelOpen ? '70vh' : '0vh',
       display: panelOpen ? 'block' : 'none',
       duration: 0.5,
       ease: 'power2.inOut',
@@ -138,23 +139,21 @@ const UserHome = () => {
   return (
     <div className='relative h-screen w-screen overflow-hidden'>
       <img
-        className='nav logo w-17 mt-7 ml-5 absolute z-3'
+        className='nav logo w-17 mt-7 ml-5 absolute z-1'
         src="https://1000logos.net/wp-content/uploads/2021/04/Uber-logo.png"
         alt="Uber"
       />
 
       <Link
         to='/user/logout'
-        className='nav absolute right-2 z-3 top-6 h-8 w-8 bg-white flex items-center justify-center border-1 rounded-full'
+        className='nav absolute right-2 z-1 top-6 h-7 w-7 bg-white flex items-center justify-center border-1 rounded-full'
       >
         <i className="text-lg font-medium ri-logout-box-r-line"></i>
       </Link>
 
-      <div className='map h-screen w-screen relative z-1' onClick={() => setVehiclePanelOpen(false)}>
-        <img
-          className='object-cover h-full w-full'
-          src="https://www.google.com/maps/d/thumbnail?mid=1-1KSpXvMbW-ya8HXrB1BumVcFRI"
-          alt="Map"
+      <div className='map h-screen w-screen relative z-0'>
+        <LiveTracking
+          alt="Live Tracking"
         />
       </div>
 

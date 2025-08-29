@@ -1,6 +1,7 @@
 import React, { useMemo, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { SocketContext } from '../context/SocketContext';
+import LiveTracking from '../components/LiveTracking';
 
 const Riding = () => {
   const vehicleImage = useMemo(() => localStorage.getItem('vehicleImage'), [])
@@ -24,19 +25,23 @@ const Riding = () => {
 
   return (
     <div className='h-screen w-screen relative overflow-hidden'>
+      <img
+        className='nav logo w-17 mt-7 ml-5 absolute z-1'
+        src="https://1000logos.net/wp-content/uploads/2021/04/Uber-logo.png"
+        alt="Uber"
+      />
+
       {/* Home Button */}
       <Link
         to='/user/home'
-        className='fixed right-2 top-2 h-8 w-8 bg-white flex items-center justify-center border-1 rounded-full'
+        className='fixed right-2 top-6 h-7 w-7 z-1 bg-white flex items-center justify-center border-1 rounded-full'
       >
         <i className="text-lg font-medium ri-home-5-line"></i>
       </Link>
 
       {/* Map */}
-      <div className='w-full h-1/2'>
-        <img
-          className='object-cover h-full w-full'
-          src="https://www.google.com/maps/d/thumbnail?mid=1-1KSpXvMbW-ya8HXrB1BumVcFRI"
+      <div className='map h-screen w-screen relative z-0'>
+        <LiveTracking
           alt="Map"
         />
       </div>

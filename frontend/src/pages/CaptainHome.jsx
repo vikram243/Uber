@@ -8,6 +8,7 @@ import CofirmUpcomingRidePopup from '../components/CofirmUpcomingRidePopup';
 import { SocketContext } from '../context/SocketContext';
 import { CaptainDataContext } from '../context/CaptainDataContext';
 import api from '../lib/api';
+import LiveTracking from '../components/LiveTracking';
 
 const CaptainHome = () => {
   const [UpcomingRidePanel, setUpcomingRidePanel] = useState(false);
@@ -111,7 +112,7 @@ const CaptainHome = () => {
 
   return (
     <div className='h-screen w-screen overflow-hidden relative'>
-      <div className='flex absolute items-center'>
+      <div className='flex absolute items-center z-1'>
         <img
           className='w-17 mt-7 mb-8 ml-5'
           src="https://1000logos.net/wp-content/uploads/2021/04/Uber-logo.png"
@@ -126,15 +127,13 @@ const CaptainHome = () => {
 
       <Link
         to='/captain/logout'
-        className='absolute right-2 top-6 h-8 w-8 bg-white flex items-center justify-center border-1 rounded-full'
+        className='absolute z-1 right-2 top-6 h-7 w-7 bg-white flex items-center justify-center border-1 rounded-full'
       >
         <i className="text-lg font-medium ri-logout-box-r-line"></i>
       </Link>
 
-      <div className='w-full h-2/3'>
-        <img
-          className='object-cover h-full w-full'
-          src="https://www.google.com/maps/d/thumbnail?mid=1-1KSpXvMbW-ya8HXrB1BumVcFRI"
+      <div className='map h-screen w-screen relative z-0'>
+        <LiveTracking
           alt="Map"
         />
       </div>

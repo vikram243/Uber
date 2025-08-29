@@ -82,10 +82,6 @@ const getSuggestions = async (input) => {
 // Get captains within a radius (in kilometers) of a given location
 const getCaptainInTheRadius = async (lat, lng, radius, vehicleType) => {
     try {
-        console.log(
-            `Fetching captains within ${radius}km of [${lng}, ${lat}] for vehicle type: ${vehicleType}`
-        );
-
         // Validate inputs
         if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
             throw new Error("Invalid latitude or longitude");

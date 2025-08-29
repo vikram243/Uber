@@ -2,7 +2,7 @@ const LookingForDriver = (props) => {
   const ride = props.ride
 
   return (
-    <div ref={props.VehicleFoundPanelRef} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
+    <div ref={props.VehicleFoundPanelRef} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-1 flex flex-col gap-4'>
       <h3 className='text-2xl font-semibold mb-3'>Looking for a Driver</h3>
       <div className='flex gap-2 justify-between flex-col items-center'>
         <img className='h-20 object-cover object-center' src={props.selectedVehicleImage || "https://i.pinimg.com/originals/93/c1/05/93c105244c0a3de81267a89cb13386f7.png"} alt="Selected Vehicle" />

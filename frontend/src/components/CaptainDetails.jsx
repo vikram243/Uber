@@ -2,7 +2,7 @@ import React from 'react'
 
 const CaptainDetails = (props) => {
   return (
-    <div className='bg-white w-full overflow-hidden p-4 flex flex-col'>
+    <div className='absolute bottom-0 bg-white w-full overflow-hidden p-4 flex flex-col'>
       <div className='flex items-center gap-8 justify-around'>
         <img
           className='h-18 border-1 p-1 rounded-full border-gray-300 object-cover object-center'

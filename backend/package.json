@@ -11,20 +11,21 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@react-google-maps/api": "^2.20.7",
     "axios": "^1.10.0",
     "bcrypt": "^5.1.1",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
+    "express-rate-limit": "^7.4.0",
     "express-validator": "^7.2.1",
+    "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.2",
-    "socket.io": "^4.8.1",
-    "compression": "^1.7.4",
-    "express-rate-limit": "^7.4.0",
-    "helmet": "^7.1.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "socket.io": "^4.8.1"
   },
   "type": "module"
 }

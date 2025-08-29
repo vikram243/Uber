@@ -22,15 +22,15 @@ const LocationSearchPanel = (props) => {
   }
 
   return (
-    <div className='absolute w-full h-full flex flex-col justify-end top-0 z-2'>
-      <div className='h-[30%] flex flex-col justify-center p-5 pt-0 rounded-t-lg shadow-lg bg-white relative'>
+    <div className='absolute bottom-0 w-full flex flex-col justify-end z-2'>
+      <div className='h-[27%] flex flex-col justify-center p-5 pt-0 rounded-t-lg shadow-lg bg-white relative'>
         <h2 className='arrow opacity-0 absolute top-0 left-2'>
           <i className="ri-arrow-down-s-line"
             onClick={() => props.setPanelOpen(false)}
           ></i>
         </h2>
 
-        <h1 className='mb-4 text-2xl font-semibold'>Find a trip</h1>
+        <h1 className='mb-3 mt-4 text-2xl font-semibold'>Find a trip</h1>
 
         <form action="" onSubmit={(e) => {
           props.submitHandler(e)

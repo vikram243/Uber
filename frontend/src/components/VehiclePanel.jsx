@@ -100,7 +100,7 @@ const VehiclePanel = (props) => {
   const noRidesAvailable = attemptedQuote && !isQuoting && (!!fareError || (fares.car === null && fares.bike === null && fares.auto === null))
 
   return (
-    <div ref={props.VehiclePanelRef} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
+    <div ref={props.VehiclePanelRef} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-1 flex flex-col gap-4'>
       <i className="ri-arrow-down-s-line absolute right-4"
         onClick={() => props.setVehiclePanelOpen(false)}
       ></i>

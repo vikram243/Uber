@@ -5,7 +5,7 @@ const WaitingForDriver = (props) => {
   return (
     <div 
       ref={props.WaitingForDriverPannelRef} 
-      className="absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4">
+      className="absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-1 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <img 
           className="h-20 object-cover object-center" 
