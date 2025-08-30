@@ -12,7 +12,7 @@ const RideDetailsCaptainRiding = React.forwardRef((props, ref) => {
     if (!ref.current) return;
     if (!isUp) {
       gsap.to(ref.current, {
-        bottom: "-48%", // move down
+        bottom: "-55%", // move down
         duration: 0.5,
         ease: "power2.out",
       });
@@ -29,7 +29,7 @@ const RideDetailsCaptainRiding = React.forwardRef((props, ref) => {
   return (
     <div
       ref={ref}
-      className='bg-white w-full translate-y-full p-4 rounded-t-lg z-2 flex flex-col absolute bottom-0'>
+      className='bg-white w-full min-h-4/5 translate-y-full p-4 rounded-t-lg z-2 flex flex-col absolute bottom-0'>
 
       {/* Toggle Button */}
       <i
@@ -74,7 +74,7 @@ const RideDetailsCaptainRiding = React.forwardRef((props, ref) => {
 
         <button
           onClick={() => {props.setOtpPanel(true); props.setRideDetailsPanel(false)}}
-          className='w-full bg-green-500 mb-2 text-white font-medium p-2 rounded-lg'>
+          className='w-[90%] absolute bottom-5 bg-green-500 mb-2 text-white font-medium p-2 rounded-lg'>
           {"Start Ride"}
         </button>
       </div>

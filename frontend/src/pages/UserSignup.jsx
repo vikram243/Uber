@@ -34,7 +34,7 @@ const UserSignup = () => {
         }
       })
       .catch((error) => {
-        console.error('Error registering user:', error.response.data.message)
+        console.error('Error registering user:', error?.response?.data?.message, error?.message)
       })
 
     setFirstName('')

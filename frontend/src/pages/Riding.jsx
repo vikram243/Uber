@@ -19,7 +19,7 @@ const Riding = () => {
     if (!ridingRef.current) return;
     if (!isUp) {
       gsap.to(ridingRef.current, {
-        bottom: "-49%", // move down
+        bottom: "-45%", // move down
         duration: 0.5,
         ease: "power2.out",
       });
@@ -70,7 +70,7 @@ const Riding = () => {
       </div>
 
       {/* Ride Details */}
-      <div ref={ridingRef} className='absolute bottom-0 bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
+      <div ref={ridingRef} className='absolute bottom-0 min-h-4/6 bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
        
         {/* Toggle Button */}
         <i

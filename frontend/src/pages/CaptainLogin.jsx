@@ -29,7 +29,7 @@ const CaptainLogin = () => {
         }
       })
       .catch((error) => {
-        console.error('Error logging in:', error.response.data.message)
+        console.error('Error logging in:', error?.response?.data?.message, error?.message)
       })
 
     setEmail('')

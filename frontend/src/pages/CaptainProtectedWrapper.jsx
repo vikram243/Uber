@@ -36,7 +36,7 @@ const CaptainProtectedWrapper = ({
           navigate('/')
         }
       } catch (error) {
-        console.error('Error fetching captain data:', error)
+        console.error('Error fetching captain data:', error?.response?.data?.message, error?.message)
         localStorage.removeItem('token')
         localStorage.removeItem('_CaptainId')
         navigate('/')

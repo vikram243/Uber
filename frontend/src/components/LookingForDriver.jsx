@@ -11,7 +11,7 @@ const LookingForDriver = (props) => {
 
     if (!isUp) {
       gsap.to(props.VehicleFoundPanelRef.current, {
-        bottom: "-50%", // move down
+        bottom: "-51%", // move down
         duration: 0.5,
         ease: "power2.out",
       });
@@ -28,7 +28,7 @@ const LookingForDriver = (props) => {
   return (
     <div
       ref={props.VehicleFoundPanelRef}
-      className="looking absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-1 flex flex-col gap-4"
+      className="looking absolute bottom-0 min-h-4/5 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-1 flex flex-col gap-4"
     >
       <h3 className="text-2xl font-semibold mt-2">Looking for a Driver</h3>
 
@@ -88,7 +88,7 @@ const LookingForDriver = (props) => {
         </div>
 
         <button
-          className="w-full bg-red-500 text-white font-medium p-2 rounded-lg"
+          className="w-[90%] absolute bottom-5 bg-red-500 text-white font-medium p-2 rounded-lg"
           onClick={props.onCancel}
         >
           Cancel Ride

@@ -23,7 +23,7 @@ const UserLogout = () => {
           navigate('/')
         }
       } catch (error) {
-        console.error('Error logging out:', error?.response?.data?.message || error.message)
+        console.error('Error logging out:', error?.response?.data?.message, error?.message)
         localStorage.removeItem('token')
         navigate('/')
       }

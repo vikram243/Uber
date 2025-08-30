@@ -19,7 +19,7 @@ const VerifyOtp = React.forwardRef((props, ref) => {
       setOtpPanel(false);
       setCompleteRide(true);
     } else {
-      console.error('Error confirming ride:', response.data.message);
+      console.error('Error confirming ride:', response?.data?.message, response?.message);
       return;
     }
   }

@@ -105,7 +105,7 @@ const CaptainHome = () => {
       setCofirmUpcomingRidePanel(true);
       setRide(response.data.ride)
     } else {
-      console.error('Error confirming ride:', response.data.message);
+      console.error('Error confirming ride:', response?.data?.message, response?.message);
       return;
     }
   };
@@ -122,7 +122,7 @@ const CaptainHome = () => {
       setCofirmUpcomingRidePanel(false);
       setRide(null)
     } else {
-      console.error('Error canceling ride:', response.data.message);
+      console.error('Error canceling ride:', response?.data?.message, response?.message);
       return;
     }
   };

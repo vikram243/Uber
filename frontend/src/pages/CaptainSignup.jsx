@@ -65,7 +65,7 @@ const CaptainSignup = () => {
         }
       })
       .catch((error) => {
-        console.error('Error registering captain:', error.response.data.message)
+        console.error('Error registering captain:', error?.response?.data?.message, error?.message)
       })
 
     setFirstName('')

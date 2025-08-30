@@ -82,8 +82,8 @@ const VehiclePanel = (props) => {
       try {
         localStorage.setItem('ride', JSON.stringify(data))
         localStorage.setItem('vehicleImage', vehicleImage)
-      } catch (err) {
-        console.error('Failed to persist ride', err)
+      } catch (error) {
+        console.error('Failed to persist ride', error?.response?.data?.message, error?.message)
       }
       props.onRideCreated && props.onRideCreated(data)
       props.setVehiclePanelOpen(false)

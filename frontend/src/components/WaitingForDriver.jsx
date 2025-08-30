@@ -10,7 +10,7 @@ const WaitingForDriver = (props) => {
     if (!props.WaitingForDriverPannelRef.current) return;
     if (!isUp) {
       gsap.to(props.WaitingForDriverPannelRef.current, {
-        bottom: "-43%", // move down
+        bottom: "-46%", // move down
         duration: 0.5,
         ease: "power2.out",
       });
@@ -27,7 +27,7 @@ const WaitingForDriver = (props) => {
   return (
     <div 
       ref={props.WaitingForDriverPannelRef} 
-      className="absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-1 flex flex-col gap-4">
+      className="absolute bottom-0 translate-y-full bg-white w-full min-h-4/5 p-4 rounded-t-lg shadow-lg z-1 flex flex-col gap-4">
       
       {/* Toggle Button */}
       <i
@@ -80,7 +80,7 @@ const WaitingForDriver = (props) => {
         </div>
       </div>
 
-      {/* 🔥 Processing Animation Line */}
+      {/* Processing Animation Line */}
       <div className="relative w-full h-1 overflow-hidden bg-gray-200 rounded-full">
         <div className="absolute top-0 left-0 h-1 w-1/4 bg-gray-700 processing-bar"></div>
       </div>

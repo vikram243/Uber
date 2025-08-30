@@ -27,8 +27,7 @@ const UserLogin = () => {
         navigate('/user/home')
       }
     } catch (error) {
-      const msg = error?.response?.data?.message || error.message
-      console.error('Error logging in:', msg)
+      console.error('Error logging in:', error?.response?.data?.message, error?.message)
     }
 
     setEmail('')

@@ -38,7 +38,7 @@ const UserProtectedWrapper = ({
           navigate('/')
         }
       } catch (error) {
-        console.error('Error fetching user data:', error)
+        console.error('Error fetching user data:', error?.response?.data?.message, error?.message)
         localStorage.removeItem('token')
         localStorage.removeItem('_UserId')
         navigate('/')

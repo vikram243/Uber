@@ -11,7 +11,7 @@ const CofirmUpcomingRidePopup = React.forwardRef((props, ref) => {
     if (!ref.current) return;
     if (!isUp) {
       gsap.to(ref.current, {
-        bottom: "-55%", // move down
+        bottom: "-50%", // move down
         duration: 0.5,
         ease: "power2.out",
       });
@@ -26,7 +26,7 @@ const CofirmUpcomingRidePopup = React.forwardRef((props, ref) => {
   };
 
   return (
-    <div ref={ref} className='absolute bottom-0 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
+    <div ref={ref} className='absolute bottom-0 min-h-10/12 translate-y-full bg-white w-full p-4 rounded-t-lg shadow-lg z-2 flex flex-col gap-4'>
 
       {/* Toggle Button */}
       <i

@@ -207,8 +207,8 @@ const UserHome = () => {
               setRide(null);
               setVehicleFound(false);
             }
-          } catch (err) {
-            console.error('Failed to cancel ride', err);
+          } catch (error) {
+            console.error('Failed to cancel ride', error?.response?.data?.message, error?.message);
           }
         }}
       />
